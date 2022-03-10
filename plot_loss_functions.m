@@ -1,4 +1,5 @@
-%Script: plot_loss_functions
+% Script: plot_loss_functions.m
+% uncomment print2pdf generate pdf from plot using the print2pdf function.
 clear;clc;
 % addpath(genpath('d:/matlab.tools/db.toolbox'))
 % parameter values
