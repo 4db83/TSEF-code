@@ -1,47 +1,85 @@
 % Script: example_acf_pacf_ar2.m
 % uncomment print2pdf generate pdf from plot using the print2pdf function.
-clear;clc;
+clear;clc;clf;
 % addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
 
 % parameter values
-a1 = 1.5 ; a2 =-0.56;
-xg = linspace(0,1.5,1000)';     % grid for plotting
-aL = [1 -a1 -a2];               % lag polynomial
-Fns = 13;                       % font size for plots
-
-% lag polynomial roots
-lag_roots = roots(fliplr(aL));  % roots of lag polynomial
-subplot(2,1,1);
-plot(xg,polyval(fliplr(aL),xg),'Linewidth',1);hold on;
-hline(0,'-k');vline(lag_roots(1),'--r');vline(lag_roots(2),'--r')
-hold off;
-ylim([-0.01 0.01]);
-xlim([1 1.5]);
-setplot([.4 .7], Fns);
-setytick(3)
-%print2pdf('..\lectures\graphics\lag_roots')
-fprintf(' Lag polynomial roots are: %2.2f %2.2f \n', lag_roots)
-
-% characteristic roots
+a1  = 1.5 ; a2 =-0.56;
+xg  = linspace(0,1.5,1000)';     % grid for plotting
+aL  = [1 -a1 -a2];               % lag polynomial
 Phi = [a1 a2;1 0];
-char_roots = eig(Phi);
-subplot(2,1,1);
-  plot(xg,polyval(aL,xg),'Linewidth',1);hold on;
-hline(0,'-k');vline(char_roots(1),'--r');vline(char_roots(2),'--r');
+% theoretical acf and pacf 
+acf_t  = acf0(aL,1,50);
+pacf_t = pacf0(aL,1,50);
+% clear plotting area and set default linewidth to 2
+set(groot,'defaultLineLineWidth',1.5); 
+fns = 15;         % font size for plots
+stp = -1.2;       % subtitle position adjustment
+dims = [.3 .20];  % subfigure dims
+tspc = .34;       % topspace
+% roots 
+lag_roots = roots(fliplr(aL));  % roots of lag polynomial
+char_roots = eig(Phi);          % characteristic roots
+
+subplot(2,2,1); hold on;
+  plot(xg,polyval(fliplr(aL),xg))
+  hline(0,'-k'); vline(lag_roots(1),'--r'); vline(lag_roots(2),'--r')
 hold off;
-ylim([-0.01 0.01])
-xlim([.5 .9]);
-setplot([.4 .7], Fns);
-setytick(3)
-%print2pdf('..\lectures\graphics\char_roots')
+box on; grid on;
+xlim([1 1.5]); ylim([-0.01 0.01]); 
+setplot([.15 .6 dims], fns, 3);
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+setoutsideTicks
+tickshrink(.8)
+subtitle('(a) Roots of lag polynomial', stp)
+
+subplot(2,2,2); hold on;
+  plot(xg,polyval(aL,xg));
+  hline(0,'-k'); vline(char_roots(1),'--r'); vline(char_roots(2),'--r')
+hold off;
+box on; grid on;
+ylim([-0.01 0.01]); xlim([.5 .9]);
+setplot([.55 .6 dims], fns, 3);
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+setoutsideTicks
+tickshrink(.8)
+subtitle('(b) Characteristic roots', stp)
+
+subplot(2,2,3); % ACF
+  bar(acf_t(2:end), 'FaceColor', [.7 .8 1]);
+box on; grid on;
+setplot([.15 tspc dims], fns);
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+tickshrink(.8)
+setoutsideTicks
+subtitle('(c) Theoretical ACF', stp)
+
+subplot(2,2,4);
+  bar(pacf_t(2:end), 'FaceColor', [.7 .8 1]);
+box on; grid on;
+setplot([.55 tspc dims], fns);
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+tickshrink(.8)
+setoutsideTicks
+subtitle('(d) Theoretical PACF', stp)
+
+% print roots to screen
+fprintf(' Lag polynomial roots are: %2.2f %2.2f \n', lag_roots)
 fprintf(' Characteristic roots are: %2.2f %2.2f \n', char_roots)
 
-%% plot theoretical acf and pacf
-acf_out     = acf0(aL,1,50);
-pacf_out    = pacf0(aL,1,50);
-bar(acf_out(2:end)) ;xlim([0 50]);          % ACF
-setplot([.4 .7], Fns);
-%print2pdf('..\lectures\graphics\acf_ar2')
-bar(pacf_out(2:end));xlim([0 50]);          % PACF
-setplot([.4 .7], Fns);
-%print2pdf('..\lectures\graphics\pacf_ar2')
+% uncomment to print to pdf 
+% print2pdf('example_acf_pacf_ar2','../graphics')
+
+
+
+
+
+
+
+
+
+
+
+
+
+%EOF 
