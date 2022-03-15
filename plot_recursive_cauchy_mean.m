@@ -1,45 +1,67 @@
-clear all; clc;
-% check matlabpool if open
-% if ~matlabpool('size') > 0; matlabpool; end
-% ghostscript and graphics handles.
-p = graph_h;						
+% Script: plot_recursive_cauchy_mean.m
+% uncomment print2pdf generate pdf from plot using the print2pdf function.
+clear;clc;clf;
+% addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
 
-fout = 'rec0';
-dir_ ='../lectures/graphics/';
+% set simulation seed for reproducability
 seed(25);
-
 n = 5e4;
 x = 1 + randraw('cauchy', [], n);
+mu = zeros(n,1);
 
+% recursively compute the mean
 parfor(i = 30:n)
-  x_bar(i) = mean(x(1:i));
+  mu(i) = mean(x(1:i));
 end
 disp('done')
-%%
-% plot(x_bar,'LineWidth',1);hold on;
-% setplot([.8 .5], 11)
-% hline(1,'k-');
-% hold off;
-%print2pdf([dir_ fout 'b']);
 
+%% plot the recursive mean estimate
 clf; 
 set(groot,'defaultLineLineWidth',2.5); 
-p.fs = 22;			% FONT SIZE                                       
-p.dm = @(x)([.8-(x-1)*.215 .86 .17]);    % FIG DIMENSION      
+fig.fs = 21;			                        % FONT SIZE                                       
+fig.dm = @(x)([.1 .8-(x-1)*.215 .8 .23]);   % FIG DIMENSION      
 
-  plot(x_bar);
- 	
-  hline(1,'k-');
-%   hline(0,'k-');
-	grid on; box on;
-  setplot([.8 .23],p.fs,0)
-%  setyticklabels(0.6:.1:1.2,1)
+plot(mu);
+hline(1);
+grid on; box on;
+setplot(fig.dm(2), fig.fs, 0);
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+% setyticklabels(ytcks, 1); 
+setoutsideTicks
+add2yaxislabel
+% tickshrink(.8)
 
-  % ADD GRIDLINES AND SECOND AXIS
-	set(gca,'GridLineStyle',':','GridAlpha',1/3);
-	setoutsideTicks; add2yaxislabel; 
-  grid on; box on;
-  
-%%
-print2pdf('cauchy_mu_hat','../lectures/graphics/')
+% uncomment to print to pdf 
+% print2pdf('cauchy_mu_hat2','../graphics')
+
+
+% 
+% % ADD GRIDLINES AND SECOND AXIS
+% 	set(gca,'GridLineStyle',':','GridAlpha',1/3);
+% 	setoutsideTicks; add2yaxislabel; 
+%   grid on; box on;
+
+%% now plot the densities
+xg = linspace(-14,14,5e3)';
+cauchypdf = @(x,mu,sig) (pi*sig*(1+((x-mu)./sig).^2)).^(-1);
+
+fig.fs = 20;			                          % FONT SIZE                                       
+fig.dm = @(x)([.1 .8-(x-1)*.215 .8 .25]);   % FIG DIMENSION      
+
+clf;clc
+hold on;
+  plot(xg,cauchypdf(xg, 0,1  )) 
+  plot(xg,cauchypdf(xg, 1,2  ))
+  plot(xg,cauchypdf(xg,-1,0.5))
+hold off;
+grid on; box on;
+setplot(fig.dm(2), fig.fs, 1);
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+setxticklabels(-12:2:12); 
+setoutsideTicks
+add2yaxislabel
+
+% uncomment to print to pdf 
+print2pdf('cauchy_pdfs','../graphics')
+
 

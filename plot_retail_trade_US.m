@@ -1,4 +1,4 @@
-% plot US retail trade, sesonally unadjusted.
+% plot US retail trade, seasonally unadjusted.
 % ---------------------------------------------------------------------------------------------
 clear; clc;
 set(groot,'defaultLineLineWidth',2); % sets the default linewidth to 1.5;

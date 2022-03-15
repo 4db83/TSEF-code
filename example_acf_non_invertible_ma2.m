@@ -1,4 +1,4 @@
-% Script: plot_MA1_rho_beta_mapping.m
+% Script: example_acf_non_invertible_ma2.m
 % uncomment print2pdf generate pdf from plot using the print2pdf function.
 clear;clc;clf;
 % addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
@@ -7,20 +7,18 @@ clear;clc;clf;
 b1 = -3.5 ; b2 = -2;
 xg = linspace(0,1.5,1000)';     % grid for plotting
 bL = [1 +b1 +b2];                 % lag polynomial
-
-% lag roots and acf of non-invertible model
+% lag roots of non-invertible model
 lag_roots = roots(fliplr(bL));
 % factored roots (eigenvalues) to make invertibel model 
-fct_roots = 1./lag_roots;
+fct_roots = 1./lag_roots; % or roots(bL) but this reverses the order,
 % bLplus = [1 -(fact_roots(1)+fact_roots(2)) fact_roots(1)*fact_roots(2)]
 b1_plus = -( fct_roots(1) + 1/fct_roots(2) );
 b2_plus =  ( fct_roots(1)*1/fct_roots(2) );
 bL_plus = [1 +b1_plus +b2_plus]; 
-
 % theoretical acf and pacf 
 acf_t  = acf0( 1,bL,50);
 pacf_t = pacf0(1,bL,50);
-
+% theoretical acf and pacf of invertible process
 acf_t_plus  = acf0( 1,bL_plus,50);
 pacf_t_plus = pacf0(1,bL_plus,50);
 
@@ -77,7 +75,8 @@ setoutsideTicks
 subtitle('(d) PACF $\beta(z)=(1+0.25z-0.125z^2)$', stp,[],1)
 
 % uncomment to print to pdf 
-print2pdf('plot_MA1_rho_beta_mapping','../graphics')
+print2pdf('example_acf_non_invertible_ma2','../graphics')
 
 
 %EOF
+
