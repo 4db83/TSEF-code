@@ -75,7 +75,7 @@ setoutsideTicks
 subtitle('(d) PACF $\beta(z)=(1+0.25z-0.125z^2)$', stp,[],1)
 
 % uncomment to print to pdf 
-print2pdf('example_acf_non_invertible_ma2','../graphics')
+% print2pdf('example_acf_non_invertible_ma2','../graphics')
 
 
 %EOF

@@ -24,14 +24,15 @@ usdata.dy = 400*(usdata.y - lag(usdata.y,1));
 ss = timerange('Q1-1947', 'Q4-2019', 'closed');
 usdata    = usdata(ss,:);
 % head2tail(usdata);
-T2 = 151;
-usdata(T2,:)
+T2 = 151; % break in volatility
 
 % recession bar color
 rec_CLR = .8*ones(3,1); 
 fig.ds = 23;
 fig.fs = 20;
 fig.st = -1.21;
+fig.dim = [.85 .2];
+fig.pos = @(x) ([.07 x]);
 
 % PLOTTING
 set(groot,'defaultLineLineWidth',2); % sets the default linewidth;
@@ -39,15 +40,15 @@ set(groot,'defaultAxesXTickLabelRotationMode','manual')
 clf;
 subplot(2,1,1)
 hold on;
-  bar( usdata.NBER*10.5, 1, 'FaceColor', rec_CLR); 
+  bar( usdata.NBER*10, 1, 'FaceColor', rec_CLR); 
   plot(usdata.y,'Color',clr(1));
 hold off;
 box on; grid on;
-setplot([.05 .60 .9 .20],[],[],6/5);
-setyticklabels(7.6:.2:10, 1)
+setplot([fig.pos(.60) fig.dim],[],[],6/5);
+setyticklabels(7.5:.5:10, 1)
 setdateticks(usdata.Time, fig.ds, 'yyyy:QQ', fig.fs);	
 set(gca,'GridLineStyle',':','GridAlpha',1/3);
-hline(7.6);hline(10);
+hline(7.5);hline(10);
 setoutsideTicks
 add2yaxislabel
 tickshrink(.9)
@@ -61,7 +62,7 @@ hold on;
   plot(usdata.dy,'Color',clr(1));
 hold off; vline(T2,'r:'); 
 box on; grid on;
-setplot([.05 .34 .9 .20],[],[],6/5);
+setplot([fig.pos(.34) fig.dim],[],[],6/5);
 setyticklabels(-12:4:16, 0)
 setdateticks(usdata.Time, fig.ds, 'yyyy:QQ', fig.fs);	
 set(gca,'GridLineStyle',':','GridAlpha',1/3);
@@ -72,22 +73,20 @@ add2yaxislabel
 tickshrink(.9)
 subtitle('(b) First difference of log of US real GDP (annualized growth rate)', fig.st)
 
+% uncomment to print to pdf
+% print2pdf('USGDP_level_growth','../graphics')
 
-%% Estimate the ARMA models
-dy = usdata{T2+1:end,'dy'};
-II = usdata{T2+1:end,'NBER'};
-fprintf('Sample size is %d\n', size(dy,1) )
-clf;
-plotacf(dy,25)
+% PLOT SAMPLE ACF/PACF OF ANNUALIZED GDP 
+plotacf(usdata.dy,50,[],[.38 .20],22);
+% uncomment to print to pdf
+% print2pdf('acf_USGDP_growth','../graphics')
 
-% set upper bounds for P and Q to search over the ARMA model:CHOOSE THESE CAREFULLY.
-P = 3;
-Q = 2;
+% Estimate the ARMA models
+% set upper bounds for p* and q* to search over the ARMA model: CHOOSE THESE CAREFULLY.
+P = 2;
+Q = 1;
 
-% this is a simulated WN series of size 5.
-%seed(123);dy = randn(5e3,1);
-
-% space allocation for SBIC and AIC values
+% SPACE ALLOCATION FOR BIC AND AIC VALUES
 BIC_pq	= zeros(P+1,Q+1);
 AIC_pq  = zeros(P+1,Q+1);
 HQC_pq	= zeros(P+1,Q+1);
@@ -101,20 +100,18 @@ for q = 1:(Q+1)
 		% this stores the ARMA(p,q) orders in a cell array. Not really needed
     %	pq{p,q}		= [num2str(max([0 PP])) ',' num2str(max([0 QQ]))];
 		% estimate the different ARMA models and store the ICs.
-%     tmp_	= estimate_armax(dy,1,PP,QQ,II,[],[],[],[],1);
-		tmp_	= estimate_armax(dy,1,PP,QQ,[],[],[],[],[],1);
-		%[~,diagn]	= estimate_armax(dy,1,PP,QQ);
+		tmp_ = estimate_armax(usdata.dy,1,PP,QQ,[],[],[],[],[],1);
 		BIC_pq(p,q) = tmp_.diagnostics.SBIC;
 		AIC_pq(p,q) = tmp_.diagnostics.AIC;
 		HQC_pq(p,q)	= tmp_.diagnostics.HQC;
   end
 end
 	
-% Store the BIC and AIC matrices
+% STORE THE BIC AND AIC MATRICES
 AIC = [[nan (0:Q)];[(0:P)' AIC_pq]];
 BIC = [[nan (0:Q)];[(0:P)' BIC_pq]];
 HQC = [[nan (0:Q)];[(0:P)' HQC_pq]];
-[AIC BIC HQC]
+ICs = [AIC BIC HQC];
 
 % Display the best ARMA(p,q) orders for AIC, BIC and HQC
 % fprintf('---------------------------------------------------------------------------\n');
@@ -125,83 +122,100 @@ fprintf('BIC best fitting ARMA model is: ARMA(%d,%d)  \n', [p_bic q_bic]-1)
 [p_hqc q_hqc]=find(min(min(HQC_pq))==HQC_pq);
 fprintf('HQC best fitting ARMA model is: ARMA(%d,%d)  \n', [p_hqc q_hqc]-1)
 
-%%
-% these are the 'best' p,q values for the ARMA(p,q). I use here BIC
-p0 = 3;
-q0 = 1;
+%% Estimate the final 'best' models based on IC
+arma_aic = estimate_armax(usdata.dy,1,1:(p_aic-1),1:(q_aic-1)); print_arma_results(arma_aic);
+arma_bic = estimate_armax(usdata.dy,1,1:(p_bic-1),1:(q_bic-1)); print_arma_results(arma_bic);
+arma_hqc = estimate_armax(usdata.dy,1,1:(p_hqc-1),1:(q_hqc-1)); print_arma_results(arma_hqc);
 
-% Estimate the final 'best' model
-[armaout]= estimate_armax(dy,1,1:p0,1:q0);
-print_arma_results(armaout);
+% DO THE PLOTTING NOW
+clf;
+subplot(2,1,1)
+hold on; LG = [];
+  bar( usdata.NBER*16, 1, 'FaceColor', rec_CLR); 
+  bar(-usdata.NBER*12, 1, 'FaceColor', rec_CLR); 
+LG(1) = plot(usdata.dy,'Color',clr(1),'LineWidth',2.75);
+LG(2) = plot(addnans(arma_aic.yhat,1),'Color',clr(2),'LineWidth',2.5);
+LG(3) = plot(addnans(arma_bic.yhat,1),'Color',clr(3),'LineStyle','--');
+% LG(4) = plot(addnans(arma_hqc.yhat,1),'Color',clr(5),'LineStyle',':');
+hold off; vline(T2,'r:'); 
+box on; grid on;
+setplot([fig.pos(.6) fig.dim],[],[],6/5);
+setyticklabels(-12:4:16, 0)
+setdateticks(usdata.Time, fig.ds, 'yyyy:QQ', fig.fs);	
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+hline(-12);hline(16);hline(0);
+ylim([-12 16])
+setoutsideTicks
+add2yaxislabel
+tickshrink(.9)
+subtitle('(a) Actual and fitted values', fig.st)
+legendflex(LG,{'GDP growth','AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor',3.*[1 1],'Interpreter','Latex')
 
-% get the alpha(L) and beta(L) polynomials and compute the roots of the process.
-aL = [1 -armaout.pars(2:p0+1)'];
-bL = [1 armaout.pars(p0+2:end)'];
-disp('Inverse Roots of alpha(L) polynomial')
-disp(roots(aL)')
-if q0>0
-	fprintf('-------------------------------------------------------------------------------\n');
-	disp('Inverse Roots of beta(L) polynomial')
-	disp(roots(bL)')
-	fprintf('===============================================================================\n');
-else
-	fprintf('-------------------------------------------------------------------------------\n');
-end
+subplot(2,1,2)
+hold on; LG = [];
+  bar( usdata.NBER*16, 1, 'FaceColor', rec_CLR); 
+  bar(-usdata.NBER*12, 1, 'FaceColor', rec_CLR); 
+% LG(1) = plot(usdata.dy,'Color',clr(1));
+LG(1) = plot(addnans(arma_aic.uhat,1),'Color',clr(2),'LineWidth',2.75);
+LG(2) = plot(addnans(arma_bic.uhat,1),'Color',clr(3),'LineStyle','--');
+% LG(4) = plot(addnans(arma_hqc.yhat,1),'Color',clr(5),'LineStyle',':');
+hold off; vline(T2,'r:'); 
+box on; grid on;
+setplot([fig.pos(.34) fig.dim],[],[],6/5);
+setyticklabels(-12:4:16, 0)
+setdateticks(usdata.Time, fig.ds, 'yyyy:QQ', fig.fs);	
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+hline(-12);hline(16);hline(0);
+ylim([-12 16])
+setoutsideTicks
+add2yaxislabel
+tickshrink(.9)
+subtitle('(b) Residuals', fig.st)
+legendflex(LG,{'AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor',3.*[1 1],'Interpreter','Latex')
 
-%% plot the fitted and actual series
-uhat	= armaout.resids;
-dyhat = armaout.yhat;
+% uncomment to print to pdf 
+% print2pdf('fitted_values_US','../graphics');
+% % [usdata.dy addnans(arma_aic.yhat,1) usdata.dy-addnans(arma_aic.yhat,1)]
 
-plot(dates,[nan;dy],g_.lw,1);
-hold on;
-plot(dates,[nan;dyhat],'r-',g_.lw,1);
-setplot([.8 .35],10)
-xlim([dates(1) dates(end)]);
-set(gca,'XTick',dates([1:24:end]));
-setytick(1)
-%ylim([7.4 10])
-hline(0,'k')
-datetick('x','yyyy:QQ','keepticks','keeplimits');
-legend('Actual','Fitted')
-%print2pdf('../lectures/graphics/fitted_gdp');
-
-%
-% plot the residuals
-plot(dates,[nan;uhat],g_.lw,1)
-setplot([.8 .35],10)
-xlim([dates(1) dates(end)]);
-set(gca,'XTick',dates([1:24:end]));
-setytick(1)
-%ylim([7.4 10])
-hline(0,'k')
-datetick('x','yyyy:QQ','keepticks','keeplimits');
-%print2pdf('../lectures/graphics/uhat_gdp');
-
-%%
-% plot the ACF/PACF of the residuals
-plotacf(uhat);
-%print2pdf('../lectures/graphics/uhat_acfplot');
+%% PLOT SAMPLE  ACF/PACF OF THE RESIDUAL SERIES OF THE AR(1)
+plotacf(arma_bic.uhat,50,[],[.38 .20],22);
+% uncomment to print to pdf
+% print2pdf('acf_arma_bic_fit','../graphics')
+plotacf(arma_aic.uhat,50,[],[.38 .20],22);
+% uncomment to print to pdf
+% print2pdf('acf_arma_aic_fit','../graphics')
 
 %% plot theoretical ACF/PACF values of fitted model to visually compare to sample ACF/PACF
-plotacf0(aL,bL,[-.2 -.2]);
-%print2pdf('../lectures/graphics/acf0_armafitted');
-
-%%  Other matlab implementations --------------------------------------------------
-% %using Pattons wrapper function
-[theta,sig2,vcv,resids,yhat] = estimate_armax2(dy,p0,q0);
-%
-
-%% using Econometrics Toolsbox
-options = optimset('fmincon');
-opts		= optimset(	options,'MaxFunEvals',3000,'Display','off',...
-										'Diagnostics','off','HessUpdate','bfgs','Algorithm','sqp',...
-										'TolX',1e-14,'TolFun', 1e-14);
-
-arma_model = arima(p0,0,q0);
-[MTout,vcv,LogL,arinfot] = estimate(arma_model,dy,'options',opts,'print',false);
-print(MTout,vcv)
-uhat2 = infer(MTout,dy);
-plot([uhat uhat2])
+clf;clc;
+aL_bic = [1 -arma_bic.pars(2:(p_bic-1)+1)'];
+bL_bic = [1  arma_bic.pars((p_bic-1)+2:end)'];
+plotacf0(aL_bic,bL_bic,50,[-.2 -.2],[.38 .20],22);
+disp('done')
+print2pdf('acf0_ar1', '../graphics');
 
 
+% disp('Inverse Roots of alpha(L) polynomial')
+% disp(roots(aL)')
+% if q0>0
+% 	fprintf('-------------------------------------------------------------------------------\n');
+% 	disp('Inverse Roots of beta(L) polynomial')
+% 	disp(roots(bL)')
+% 	fprintf('===============================================================================\n');
+% else
+% 	fprintf('-------------------------------------------------------------------------------\n');
+% end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+%EOF 
