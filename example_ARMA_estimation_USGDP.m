@@ -172,9 +172,9 @@ add2yaxislabel
 tickshrink(.9)
 subtitle('(b) Residuals', fig.st)
 legendflex(LG,{'AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor',3.*[1 1],'Interpreter','Latex')
-
 % uncomment to print to pdf 
 % print2pdf('fitted_values_US','../graphics');
+
 % % [usdata.dy addnans(arma_aic.yhat,1) usdata.dy-addnans(arma_aic.yhat,1)]
 
 %% PLOT SAMPLE  ACF/PACF OF THE RESIDUAL SERIES OF THE AR(1)
@@ -190,24 +190,9 @@ clf;clc;
 aL_bic = [1 -arma_bic.pars(2:(p_bic-1)+1)'];
 bL_bic = [1  arma_bic.pars((p_bic-1)+2:end)'];
 plotacf0(aL_bic,bL_bic,50,[-.2 -.2],[.38 .20],22);
-disp('done')
-print2pdf('acf0_ar1', '../graphics');
 
-
-% disp('Inverse Roots of alpha(L) polynomial')
-% disp(roots(aL)')
-% if q0>0
-% 	fprintf('-------------------------------------------------------------------------------\n');
-% 	disp('Inverse Roots of beta(L) polynomial')
-% 	disp(roots(bL)')
-% 	fprintf('===============================================================================\n');
-% else
-% 	fprintf('-------------------------------------------------------------------------------\n');
-% end
-
-
-
-
+% uncomment to print to pdf
+% print2pdf('acf0_ar1', '../graphics');
 
 
 
