@@ -178,21 +178,62 @@ legendflex(LG,{'AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor
 % % [usdata.dy addnans(arma_aic.yhat,1) usdata.dy-addnans(arma_aic.yhat,1)]
 
 %% PLOT SAMPLE  ACF/PACF OF THE RESIDUAL SERIES OF THE AR(1)
-plotacf(arma_bic.uhat,50,[],[.38 .20],22);
+plotacf(arma_bic.uhat);
 % uncomment to print to pdf
-% print2pdf('acf_arma_bic_fit','../graphics')
-plotacf(arma_aic.uhat,50,[],[.38 .20],22);
+print2pdf('acf_arma_bic_fit','../graphics')
+plotacf(arma_aic.uhat);
 % uncomment to print to pdf
-% print2pdf('acf_arma_aic_fit','../graphics')
+print2pdf('acf_arma_aic_fit','../graphics')
 
 %% plot theoretical ACF/PACF values of fitted model to visually compare to sample ACF/PACF
 clf;clc;
 aL_bic = [1 -arma_bic.pars(2:(p_bic-1)+1)'];
 bL_bic = [1  arma_bic.pars((p_bic-1)+2:end)'];
-plotacf0(aL_bic,bL_bic,50,[-.2 -.2],[.38 .20],22);
+plotacf0(aL_bic,bL_bic);
 
 % uncomment to print to pdf
 % print2pdf('acf0_ar1', '../graphics');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
