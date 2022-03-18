@@ -19,7 +19,7 @@ end
 % generate y = log-gdp and dy = annualized gpd growth.
 usdata.y  = log(usdata.gdpc1);
 usdata.dy = 400*(usdata.y - lag(usdata.y,1));
-% uncomment to write to csv file 
+% % uncomment to write to csv file 
 % writetimetable(usdata,'real_gdp_US_2021Q4.csv','Delimiter',',')
 ss = timerange('Q1-1947', 'Q4-2019', 'closed');
 usdata    = usdata(ss,:);
@@ -77,9 +77,9 @@ subtitle('(b) First difference of log of US real GDP (annualized growth rate)', 
 % print2pdf('USGDP_level_growth','../graphics')
 
 % PLOT SAMPLE ACF/PACF OF ANNUALIZED GDP 
-plotacf(usdata.dy,50,[],[.38 .20],22);
+plotacf(usdata.dy);
 % uncomment to print to pdf
-% print2pdf('acf_USGDP_growth','../graphics')
+print2pdf('acf_USGDP_growth','../graphics')
 
 % Estimate the ARMA models
 % set upper bounds for p* and q* to search over the ARMA model: CHOOSE THESE CAREFULLY.
@@ -175,22 +175,23 @@ legendflex(LG,{'AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor
 % uncomment to print to pdf 
 % print2pdf('fitted_values_US','../graphics');
 
-% % [usdata.dy addnans(arma_aic.yhat,1) usdata.dy-addnans(arma_aic.yhat,1)]
+% [usdata.dy addnans(arma_aic.yhat,1) usdata.dy-addnans(arma_aic.yhat,1)]
 
 %% PLOT SAMPLE  ACF/PACF OF THE RESIDUAL SERIES OF THE AR(1)
 plotacf(arma_bic.uhat);
 % uncomment to print to pdf
 print2pdf('acf_arma_bic_fit','../graphics')
+
 plotacf(arma_aic.uhat);
 % uncomment to print to pdf
 print2pdf('acf_arma_aic_fit','../graphics')
 
-%% plot theoretical ACF/PACF values of fitted model to visually compare to sample ACF/PACF
+% plot theoretical ACF/PACF values of fitted model to visually compare to sample ACF/PACF
 clf;clc;
 aL_bic = [1 -arma_bic.pars(2:(p_bic-1)+1)'];
 bL_bic = [1  arma_bic.pars((p_bic-1)+2:end)'];
-plotacf0(aL_bic,bL_bic);
 
+% plotacf0(aL_bic,bL_bic);
 % uncomment to print to pdf
 % print2pdf('acf0_ar1', '../graphics');
 
