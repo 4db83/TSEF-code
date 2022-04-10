@@ -11,12 +11,14 @@ if get_new_data
   usdata = as_timetable(getFredData('GDPC1', '1947-01-01', '2021-12-31','lin','q'),'gdpc1'); 
   usdata = synchronize(usdata,as_timetable(getFredData('USRECQ', '1947-01-01', '2021-12-31','lin','q'),'NBER'));
   save('./data/real_gdp_US_2021Q4.mat', 'usdata');
+  % print/export to xlsx if needed
+  print2xls(usdata,'/data/real_gdp_US_2021Q4.xlsx')
   disp('done saving the data')
 else
   load './data/real_gdp_US_2021Q4.mat';
 end
 
-% generate y = log-gdp and dy = annualized gpd growth.
+%% generate y = log-gdp and dy = annualized gpd growth.
 usdata.y  = log(usdata.gdpc1);
 usdata.dy = 400*(usdata.y - lag(usdata.y,1));
 % % uncomment to write to csv file 
