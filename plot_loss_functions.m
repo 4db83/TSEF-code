@@ -1,7 +1,10 @@
 % Script: plot_loss_functions.m
-% uncomment print2pdf generate pdf from plot using the print2pdf function.
-clear;clc;
-% addpath(genpath('d:/matlab.tools/db.toolbox'))
+% NOTE: To be able to run this code, you need the contents of the db.toolbox available from:
+% https://github.com/4db83/db.toolbox/archive/refs/heads/main.zip. Unzip the contents locally
+% to the same directory as this script, and then uncomment the following line below:
+% addpath(genpath('./db.toolbox-main'))
+clear;clc;clf;
+
 % parameter values
 e  = linspace(-1,1,1e3)';
 

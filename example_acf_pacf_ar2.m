@@ -1,7 +1,9 @@
 % Script: example_acf_pacf_ar2.m
-% uncomment print2pdf generate pdf from plot using the print2pdf function.
+% NOTE: To be able to run this code, you need the contents of the db.toolbox available from:
+% https://github.com/4db83/db.toolbox/archive/refs/heads/main.zip. Unzip the contents locally
+% to the same directory as this script, and then uncomment the following line below:
+% addpath(genpath('./db.toolbox-main'))
 clear;clc;clf;
-% addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
 
 % parameter values
 a1  = 1.5 ; a2 =-0.56;

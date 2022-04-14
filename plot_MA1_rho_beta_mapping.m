@@ -1,7 +1,9 @@
 % Script: plot_MA1_rho_beta_mapping.m
-% uncomment print2pdf generate pdf from plot using the print2pdf function.
+% NOTE: To be able to run this code, you need the contents of the db.toolbox available from:
+% https://github.com/4db83/db.toolbox/archive/refs/heads/main.zip. Unzip the contents locally
+% to the same directory as this script, and then uncomment the following line below:
+% addpath(genpath('./db.toolbox-main'))
 clear;clc;clf;
-% addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
 
 % create inline function
 f = inline('b./(1+b.^2)','b');

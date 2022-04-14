@@ -1,7 +1,11 @@
 % plot US retail trade, seasonally unadjusted.
-% ---------------------------------------------------------------------------------------------
-clear; clc;
-set(groot,'defaultLineLineWidth',2); % sets the default linewidth to 1.5;
+% NOTE: To be able to run this code, you need the contents of the db.toolbox available from:
+% https://github.com/4db83/db.toolbox/archive/refs/heads/main.zip. Unzip the contents locally
+% to the same directory as this script, and then uncomment the following line below:
+% addpath(genpath('./db.toolbox-main'))
+clear;clc;clf;
+% sets the default linewidth to 1.5;
+set(groot,'defaultLineLineWidth',2); 
 
 % % get data from FREDwebsite if not in ./data/ directory
 % usdat = as_timetable(getFredData('RSXFSN', '1947-01-01', '2021-12-31','lin','m'),'RetailSales');
