@@ -10,7 +10,8 @@ In Matlab you then have the following choices to integrate the db.toolbox:
 2) Add temporally: simply uncomment line number 5:
 <span style="font-family:Courier New;">
   % addpath(genpath('./db.toolbox-main'))
-</span>  
+</span>
+
 from the respective script that is run.
 
 
