@@ -79,7 +79,7 @@ tickshrink(.8)
 setoutsideTicks
 subtitle('(c) Time series plot', stp)
 
-% computing the ACF from the MA(inf) representation of the AR model.
+% COMPUTING THE ACF FROM THE MA(INF) REPRESENTATION OF THE AR MODEL.
 N   = 1e3;              % approximation order
 b		= arma2ma(aL,1,N);	% MA(inf) beta coefficients.
 g0  = b'*b;							% variance.
