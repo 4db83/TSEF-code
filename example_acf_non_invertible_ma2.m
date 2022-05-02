@@ -1,39 +1,56 @@
 % Script: example_acf_non_invertible_ma2.m
-% uncomment print2pdf generate pdf from plot using the print2pdf function.
+% NOTE: To be able to run this code, you need the contents of the db.toolbox available from:
+% https://github.com/4db83/db.toolbox/archive/refs/heads/main.zip. Unzip the contents locally
+% to the same directory as this script, and then uncomment the following line below:
+% addpath(genpath('./db.toolbox-main'))
 clear;clc;clf;
-% addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
 
-% parameter values
+% MA lag polynomial
 b1 = -3.5 ; b2 = -2;
-xg = linspace(0,1.5,1000)';     % grid for plotting
-bL = [1 +b1 +b2];                 % lag polynomial
-% lag roots of non-invertible model
-lag_roots = roots(fliplr(bL));
-% factored roots (eigenvalues) to make invertibel model 
-fct_roots = 1./lag_roots; % or roots(bL) but this reverses the order,
-% bLplus = [1 -(fact_roots(1)+fact_roots(2)) fact_roots(1)*fact_roots(2)]
-b1_plus = -( fct_roots(1) + 1/fct_roots(2) );
-b2_plus =  ( fct_roots(1)*1/fct_roots(2) );
-bL_plus = [1 +b1_plus +b2_plus]; 
-% theoretical acf and pacf 
-acf_t  = acf0( 1,bL,50);
+bL = [1 +b1 +b2];   
+
+% theoretical ACF and PACF 
+acf_t  = acf0 (1,bL,50);
 pacf_t = pacf0(1,bL,50);
-% theoretical acf and pacf of invertible process
+
+% lag polynomial and characteristic/factored roots of non-invertible model
+lag_roots		= roots(fliplr(bL));  % lag polynomial roots
+fact_roots 	= 1./lag_roots;       % factored roots
+% fact_roots 	= roots(bL);        % also the factored roots, but this reverses the order of them,
+
+fprintf(' For the non-invertible process \n')
+fprintf(' Lag Polynomial roots are     : % 2.2f % 2.2f \n',   lag_roots);
+fprintf(' Factored Polynomial roots are: % 2.2f % 2.2f \n\n', fact_roots);
+
+% Make process invertible 
+b1_plus = -( fact_roots(1) + 1/fact_roots(2) );
+b2_plus =  ( fact_roots(1)*1/fact_roots(2) );
+bL_plus = [1 +b1_plus +b2_plus]; 
+
+% theoretical ACF and PACF of invertible process
 acf_t_plus  = acf0( 1,bL_plus,50);
 pacf_t_plus = pacf0(1,bL_plus,50);
 
-fprintf(' Polynomial roots are: %2.2f %2.2f \n', lag_roots);
-fprintf('   Factored roots are: %2.2f %2.2f \n', fct_roots);
+% lag polynomial and characteristic/factored roots of invertible model
+lag_roots_plus		= roots(fliplr(bL_plus));  % lag polynomial roots
+fact_roots_plus 	= 1./lag_roots;            % factored roots
+% fact_roots_plus 	= roots(bL_plus);        % factored roots to make invertibel model or roots(bL), this reverses the order,
 
-% clear plotting area and set default linewidth
+fprintf(' For the invertible process \n')
+fprintf(' Lag Polynomial roots are     : % 2.2f % 2.2f \n', lag_roots_plus);
+fprintf(' Factored Polynomial roots are: % 2.2f % 2.2f \n', fact_roots_plus);
+
+% PLOTS
+% clear plotting area and set default line-width to 2
 set(groot,'defaultLineLineWidth',1.5); 
-fns = 15;         % font size for plots
-stp = -1.2;       % subtitle position adjustment
-dims = [.3 .20];  % subfigure dims
-tspc = .34;       % topspace
-ytcks = [-.2:.1:.3]; % yticks 
+xg  = linspace(0,1.5,1e3) ;   % grid for plotting
+fns = 15;                     % font size for plots
+stp = -1.2;                   % subtitle position adjustment
+dims = [.3 .20];              % subfigure dims
+tspc = .34;                   % topspace
+ytcks = [-.2:.1:.3];          % control y-yticks 
 
-% plots
+% 2x2 grid of plots
 subplot(2,2,1);
   bar(acf_t(2:end), 'FaceColor', [.7 .8 1]);
 box on; grid on;

@@ -19,12 +19,12 @@ pacf_t = pacf0(aL,1,50);
 % lag polynomial and characteristic/factored roots 
 lag_roots		= roots(fliplr(aL));  % lag polynomial roots
 fact_roots 	= roots(aL);          % factored roots
-char_roots 	= eig(Phi);          	% characteristic/factored roots
+char_roots 	= eig(Phi);          	% characteristic roots (eigenvalues of Phi)
 
 % print roots to screen
-fprintf(' Lag polynomial roots are: %2.2f %2.2f \n', lag_roots)
-fprintf(' Factored roots are:       %2.2f %2.2f \n', fact_roots)
-fprintf(' Characteristic roots are: %2.2f %2.2f \n', char_roots)
+fprintf(' Lag Polynomial roots are:       %2.4f %2.4f \n', lag_roots)
+fprintf(' Factored Polynomial roots are:  %2.4f %2.4f \n', fact_roots)
+fprintf(' Characteristic roots are:       %2.4f %2.4f \n', char_roots)
 
 % PLOTS
 % clear plotting area and set default line-width to 2

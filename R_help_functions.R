@@ -25,19 +25,15 @@ plot.acf0 = function(ARpolynomial, MApolynomial, max.lag = 50){
 	MAterms =  MApolynomial[-1]
 	# add one to it to get the required lag structure because of the zapsmall function
 	max.lag = max.lag+1
-	
 	ACF 	= ARMAacf(ARterms,MAterms,(max.lag),pacf=FALSE)[2:max.lag]
 	PACF 	= zapsmall(ARMAacf(ARterms,MAterms,max.lag,pacf=TRUE))[1:(max.lag-1)]
-	
 	LAG 	= 1:(max.lag-1)
 	minA 	= min(ACF)
 	minP	= min(PACF)
-	
-	LW 		= 7.5
+	LW 		= 6.6
 	colr 	= "skyblue2"
 	minu 	= min(minA,minP)-.01
 	old.par <- par(no.readonly = TRUE)
-	
 	par(mfrow=c(1,2), mar = c(3,3,2,0.8),oma = c(1,1.2,1,1), mgp = c(1.7,0.5,0))
 	plot(LAG, ACF, type="h",ylim=c(minu,1) ,lwd=LW, las=1, lend = 1, col=colr, xlim=c(1, max.lag),
 	     xlab="Lag")
@@ -63,16 +59,16 @@ plot.acf=function(data_in, max.lag = 50){
 	minP 	= min(PACF)
 	U 		= 2/sqrt(num)
 	L 		=-U
-	LW 		= 7.5
+	LW 		= 6.6
 	colr 	= "skyblue2"
 	minu 	= min(minA,minP,L)-.01
 	old.par <- par(no.readonly = TRUE)
 	par(mfrow=c(1,2), mar = c(3,3,2,0.8),oma = c(1,1.2,1,1), mgp = c(1.7,0.5,0))
 	plot(LAG, ACF, type="h",ylim=c(minu,1) ,lwd=LW, las=1, lend = 1, col=colr, xlim=c(1, max.lag))
 	  #main=paste("Series: ",deparse(substitute(series))))
-	  abline(h=c(0,L,U), lty=c(1,2,2), col=c(1,4,4))
+	  abline(h=c(0,L,U), lty=c(1,2,2), col=c(1,2,2))
 	plot(LAG, PACF, type="h",ylim=c(minu,1) ,lwd=LW, lend = 1, col=colr, xlim=c(1, max.lag))
-	  abline(h=c(0,L,U), lty=c(1,2,2), col=c(1,4,4))
+	  abline(h=c(0,L,U), lty=c(1,2,2), col=c(1,2,2))
 	on.exit(par(old.par))  
 	ACF<-round(ACF,2); PACF<-round(PACF,2)    
 	return(invisible(cbind(ACF, PACF))) 

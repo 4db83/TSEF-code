@@ -1,6 +1,6 @@
 %% Example: YW estimation of a persistent AR(2) model.
 clc;clear all;clf
-%matlabpool 4;
+ss%matlabpool 4;
 T   = 2e2;              % sample size
 B   = 2e2;              % burn-in
 NS  = 1e3;              % number of simulations
