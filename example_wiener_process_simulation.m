@@ -2,9 +2,9 @@
 clc;clear all;
 addpath('d:/matlab.tools/db.toolbox/');
 
-T = 100000;
-t = (0:1:T)'/T;                       % t is the column vector [0 1/N 2/N ... 1]
-W = [0; cumsum(randn(T,1))]/sqrt(T);  % S is running sum of N(0,1/N) variables
+T = 1e6;
+t = (0:1:T)'/T;                       % t is the column vector [0 1/T 2/T ... T/T=1]
+W = [0; cumsum(randn(T,1))]/sqrt(T);  % S is running sum of N(0,1/T) variables
 %seed(123)
 
 %% plot the path of the Wiener process
