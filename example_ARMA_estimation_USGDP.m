@@ -1,7 +1,7 @@
 % Script: example_ARMA_estimation_USGDP.m
 % Example of ARMA model fitted to US Real GDP;
 % uncomment print2pdf generate pdf from plot using the print2pdf function.
-clear;clc;clf;
+clear; clc;
 % addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
 get_new_data = 0;
 
@@ -18,16 +18,19 @@ else
   load './data/real_gdp_US_2021Q4.mat';
 end
 
-%% generate y = log-gdp and dy = annualized gpd growth.
+%% GENERATE Y = LOG-GDP AND DY = ANNUALIZED GPD GROWTH.
 usdata.y  = log(usdata.gdpc1);
 usdata.dy = 400*(usdata.y - lag(usdata.y,1));
 % % uncomment to write to csv file 
 % writetimetable(usdata,'real_gdp_US_2021Q4.csv','Delimiter',',')
 ss = timerange('Q1-1947', 'Q4-2019', 'closed');
-usdata    = usdata(ss,:);
+usdata = usdata(ss,:);
 % head2tail(usdata);
 T2 = 151; % break in volatility
 
+% PLOT CONTROLS
+set(groot,'defaultLineLineWidth',2); % sets the default linewidth;
+set(groot,'defaultAxesXTickLabelRotationMode','manual')
 % recession bar color
 rec_CLR = .8*ones(3,1); 
 fig.ds = 23;
@@ -36,15 +39,13 @@ fig.st = -1.21;
 fig.dim = [.85 .2];
 fig.pos = @(x) ([.07 x]);
 
-% PLOTTING
-set(groot,'defaultLineLineWidth',2); % sets the default linewidth;
-set(groot,'defaultAxesXTickLabelRotationMode','manual')
-clf;
+% 2x1 grid of plots
+figure(1);
 subplot(2,1,1)
 hold on;
   bar( usdata.NBER*10, 1, 'FaceColor', rec_CLR); 
   plot(usdata.y,'Color',clr(1));
-hold off;
+hold off; vline(T2,'r:'); 
 box on; grid on;
 setplot([fig.pos(.60) fig.dim],[],[],6/5);
 setyticklabels(7.5:.5:10, 1)
@@ -74,21 +75,22 @@ setoutsideTicks
 add2yaxislabel
 tickshrink(.9)
 subtitle('(b) First difference of log of US real GDP (annualized growth rate)', fig.st)
-
 % uncomment to print to pdf
 % print2pdf('USGDP_level_growth','../graphics')
 
-% PLOT SAMPLE ACF/PACF OF ANNUALIZED GDP 
+%% PLOT SAMPLE ACF/PACF OF ANNUALIZED GDP 
+figure(2);
 plotacf(usdata.dy);
+subtitle('Sample ACF/PACF of US GDP growth', [-1.35 -.66], 20)
 % uncomment to print to pdf
 % print2pdf('acf_USGDP_growth','../graphics')
 
-% Estimate the ARMA models
+% ESTIMATE THE ARMA MODELS
 % set upper bounds for p* and q* to search over the ARMA model: CHOOSE THESE CAREFULLY.
 P = 2;
 Q = 1;
 
-% SPACE ALLOCATION FOR BIC AND AIC VALUES
+% Space allocation for bic and aic values
 BIC_pq	= zeros(P+1,Q+1);
 AIC_pq  = zeros(P+1,Q+1);
 HQC_pq	= zeros(P+1,Q+1);
@@ -109,7 +111,7 @@ for q = 1:(Q+1)
   end
 end
 	
-% STORE THE BIC AND AIC MATRICES
+% Store the bic and aic matrices
 AIC = [[nan (0:Q)];[(0:P)' AIC_pq]];
 BIC = [[nan (0:Q)];[(0:P)' BIC_pq]];
 HQC = [[nan (0:Q)];[(0:P)' HQC_pq]];
@@ -124,13 +126,13 @@ fprintf('BIC best fitting ARMA model is: ARMA(%d,%d)  \n', [p_bic q_bic]-1)
 [p_hqc q_hqc]=find(min(min(HQC_pq))==HQC_pq);
 fprintf('HQC best fitting ARMA model is: ARMA(%d,%d)  \n', [p_hqc q_hqc]-1)
 
-%% Estimate the final 'best' models based on IC
+% Estimate the final 'best' models based on IC
 arma_aic = estimate_armax(usdata.dy,1,1:(p_aic-1),1:(q_aic-1)); print_arma_results(arma_aic);
 arma_bic = estimate_armax(usdata.dy,1,1:(p_bic-1),1:(q_bic-1)); print_arma_results(arma_bic);
 arma_hqc = estimate_armax(usdata.dy,1,1:(p_hqc-1),1:(q_hqc-1)); print_arma_results(arma_hqc);
 
-% DO THE PLOTTING NOW
-clf;
+%% PLOT ACTUAL AND FITTED VALUES/RESIDUALS
+figure(3);
 subplot(2,1,1)
 hold on; LG = [];
   bar( usdata.NBER*16, 1, 'FaceColor', rec_CLR); 
@@ -177,23 +179,28 @@ legendflex(LG,{'AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor
 % uncomment to print to pdf 
 % print2pdf('fitted_values_US','../graphics');
 
-% [usdata.dy addnans(arma_aic.yhat,1) usdata.dy-addnans(arma_aic.yhat,1)]
-
-%% PLOT SAMPLE  ACF/PACF OF THE RESIDUAL SERIES OF THE AR(1)
+%% SOME POST ESTIMATOIN PLOTS 
+% plot sample acf/pacf of the residual series of model selected by BIC and AIC
+figure(4);
 plotacf(arma_bic.uhat);
+subtitle('Sample ACF/PACF of residuals from BIC model', [-1.35 -.66], 20)
 % uncomment to print to pdf
-print2pdf('acf_arma_bic_fit','../graphics')
+% print2pdf('acf_arma_bic_fit','../graphics')
 
+figure(5);
 plotacf(arma_aic.uhat);
+subtitle('Sample ACF/PACF of residuals from AIC model', [-1.35 -.66], 20)
 % uncomment to print to pdf
-print2pdf('acf_arma_aic_fit','../graphics')
-
-% plot theoretical ACF/PACF values of fitted model to visually compare to sample ACF/PACF
-clf;clc;
+% print2pdf('acf_arma_aic_fit','../graphics')
+ 
+% THEORETICAL ACF/PACF VALUES OF FITTED MODEL
 aL_bic = [1 -arma_bic.pars(2:(p_bic-1)+1)'];
 bL_bic = [1  arma_bic.pars((p_bic-1)+2:end)'];
 
-% plotacf0(aL_bic,bL_bic);
+% plot theoretical ACF/PACF values of fitted model to visually compare to sample ACF/PACF
+figure(6);
+plotacf0(aL_bic,bL_bic);
+subtitle('Theoretical ACF/PACF of BIC model', [-1.35 -.66], 20)
 % uncomment to print to pdf
 % print2pdf('acf0_ar1', '../graphics');
 

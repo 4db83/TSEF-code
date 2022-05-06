@@ -16,11 +16,11 @@ source("./R_help_functions.R")
 
 Pmax  = 5
 Qmax  = 5
-T     = 3e2
+T     = 2e3
 a0    = rep(0,Pmax)
 b0    = rep(0,Qmax)
 T0    = proc.time()
-Nsim  = 10;
+Nsim  = 30;
 
 # space allocation;
 arma.terms = matrix(0,Nsim,2)    
