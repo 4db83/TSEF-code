@@ -81,7 +81,7 @@ subtitle('(b) First difference of log of US real GDP (annualized growth rate)', 
 % PLOT SAMPLE ACF/PACF OF ANNUALIZED GDP 
 plotacf(usdata.dy);
 % uncomment to print to pdf
-print2pdf('acf_USGDP_growth','../graphics')
+% print2pdf('acf_USGDP_growth','../graphics')
 
 % Estimate the ARMA models
 % set upper bounds for p* and q* to search over the ARMA model: CHOOSE THESE CAREFULLY.
