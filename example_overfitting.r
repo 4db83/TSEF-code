@@ -14,13 +14,13 @@ if (!"pacman" %in% installed.packages()){install.packages("pacman"); cat("pacman
 pacman::p_load(polynom, matlab, forecast)
 source("./R_help_functions.R")
 
-Pmax  = 5
-Qmax  = 5
-T     = 2e3
-a0    = rep(0,Pmax)
-b0    = rep(0,Qmax)
-T0    = proc.time()
-Nsim  = 30;
+Pmax  = 5;
+Qmax  = 5;
+T     = 3e2;
+a0    = rep(0,Pmax);
+b0    = rep(0,Qmax);
+T0    = proc.time();
+Nsim  = 10;
 
 # space allocation;
 arma.terms = matrix(0,Nsim,2)    
