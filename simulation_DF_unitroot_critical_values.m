@@ -4,7 +4,7 @@
 clear; clc;
 % addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
 % some controls
-N     = 1e4;
+N     = 1e5;
 T     = 251;
 C     = ones(T-1,1);
 trnd  = (1:T-1)';
@@ -53,14 +53,20 @@ disp(PCT)
 clf;
 set(groot,'defaultLineLineWidth',1.5); % sets the default linewidth;
 set(groot,'defaultAxesXTickLabelRotationMode','manual')
-fig.dim = [.85 .25];
+fig.dim = [.85 .75];
 fig.pos = @(x) ([.07 x]);
 % xgrid for Density estimate and plot
-xg  = linspace(-6,5,1e3)';              
-% compute the density over xg grid
+xg  = linspace(-6,4,1e3)';              
+% xg  = linspace(-35,5,1e3)';              
+% compute the of the tstatistic density over xg grid
 t0  = ksdensity(tstat0, xg); 
 tC  = ksdensity(tstatC, xg);
 tCT = ksdensity(tstatCT,xg);
+
+% compute the density of T(rho_hat -1).
+% t0  = ksdensity(T*(rho0-1), xg); 
+% tC  = ksdensity((T-1)*(rhoC-1), xg);
+% tCT = ksdensity((T-1)*(rhoCT-1),xg);
  
 LW = 'LineWidth';
 clf;
@@ -71,7 +77,7 @@ LG(3) = plot(xg,tCT);
 LG(4) = plot(xg,normpdf(xg,0,1),'-k');
 hold off; 
 box on; grid on;
-setplot([fig.pos(.60) fig.dim],16,[],6/5);
+setplot([fig.pos(.10) fig.dim],16,[],6/5);
 set(gca,'GridLineStyle',':','GridAlpha',1/3);
 setoutsideTicks
 add2yaxislabel
