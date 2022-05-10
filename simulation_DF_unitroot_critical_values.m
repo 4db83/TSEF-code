@@ -1,14 +1,15 @@
 % Script: simulation_DF_unitroot_critical_values.m
-% Simulation of Dickey-Fuller critical values
+% Simulation of Dickey-Fuller critical values. Cleaned up. does not require fastols anymore, uses
+% fstols function defined at the end of this script.
 % uncomment print2pdf generate pdf from plot using the print2pdf function.
 clear; clc;
 % addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
 % some controls
-N     = 1e5;
-T     = 251;
-C     = ones(T-1,1);
-trnd  = (1:T-1)';
-seed  = 1234;
+N     = 5e4;
+T     = 500;
+C     = ones(T,1);
+trnd  = (1:T)';
+seed  = 123;
 
 % space allocation for storage of tstats and coeffs
 tstat0  = zeros(N,1);   rho0 = zeros(N,1);
@@ -19,75 +20,162 @@ tic;
 % main loop
 for jj = 1:N
   % generate pure random walk
-  y = cumsum(randn(T,1));
+  y = cumsum(randn(T+1,1));
   % make Y X variables
-  Y = y(2:T); 			% y(t)
-  X = y(1:T-1);		  % y(t-1)
-  
-	% run the 3 separate regressions. ,1 is for no constant
-  [bhat,out]      = fastols(Y, X,1);  
-  [Cbhat,Cout]    = fastols(Y,[X C],1);
-  [CTbhat,CTout]  = fastols(Y,[X C trnd],1);
+  Y = y(2:end); 			% y(t)
+  X = y(1:end-1);		  % y(t-1)
 
-  % store t-stats and bhat coeffcients
-  tstat0(jj)  = (bhat(1)-1)/out.se(1);
-  tstatC(jj)  = (Cbhat(1)-1)/Cout.se(1);
-  tstatCT(jj) = (CTbhat(1)-1)/CTout.se(1);
+	% run the 3 separate regressions
+  [bhat,se]      = fstols(Y,X);  
+  [Cbhat,Cse]    = fstols(Y,[X C]);
+  [CTbhat,CTse]  = fstols(Y,[X C trnd]);
+  
+  % store bhat (rho_hat) coeffcients
   rho0(jj) 		= bhat(1);
   rhoC(jj) 		= Cbhat(1);
   rhoCT(jj)		= CTbhat(1);
-end
+  % store t-stats now for the null of a unit-root
+  tstat0(jj)  = (bhat(1)-1)  /se(1);
+  tstatC(jj)  = (Cbhat(1)-1) /Cse(1);
+  tstatCT(jj) = (CTbhat(1)-1)/CTse(1);
+end 
 toc
 
+%% COMPUTE PERCENTILS OF CRITICAL VALUES
+pctls   = [1 2.5 5 10 50 90 95 97.5 99]; 
 % DF-critical values
-pct_p0 = percentile(tstat0 , [1 2.5 5]) ; % histogram(tstat0, 100, 'Normalization','pdf')
-pct_pC = percentile(tstatC , [1 2.5 5]) ; % histogram(tstatC, 100, 'Normalization','pdf')
-pct_CT = percentile(tstatCT, [1 2.5 5]); % histogram(tstatCT,100, 'Normalization','pdf')
+pct_t0  = percentile(tstat0 , pctls ); % histogram(tstat0, 100, 'Normalization','pdf')
+pct_tC  = percentile(tstatC , pctls ); % histogram(tstatC, 100, 'Normalization','pdf')
+pct_tCT = percentile(tstatCT, pctls ); % histogram(tstatCT,100, 'Normalization','pdf')
+% now for T(rho_hat -1) 
+pct_p0  = percentile(T*(rho0-1) , pctls ); % histogram(tstat0, 100, 'Normalization','pdf')
+pct_pC  = percentile(T*(rhoC-1) , pctls ); % histogram(tstatC, 100, 'Normalization','pdf')
+pct_pCT = percentile(T*(rhoCT-1), pctls ); % histogram(tstatCT,100, 'Normalization','pdf')
 
-PCT = [pct_p0; pct_pC; pct_CT];
+% make a pretty output table
+PCT_t = [pct_t0; pct_tC; pct_tCT];
+PCT_p = [pct_p0; pct_pC; pct_pCT];
 
-fprintf('    0.010     0.025     0.050\n')
-disp(PCT)
+% print to screen
+caseNamaes = {'No Constant', 'Contant','Constant & trend'};
+sep(140);print2screen(PCT_t,[['T = ',num2str(T),' (rho-1)/se(rho)'], caseNamaes],num2str(pctls'),2)
+sep(140);print2screen(PCT_p,[['T = ',num2str(T),' T*(rho-1)      '] ,caseNamaes],num2str(pctls'),2)
 
 %% PLOT CONTROLS
 clf;
 set(groot,'defaultLineLineWidth',1.5); % sets the default linewidth;
 set(groot,'defaultAxesXTickLabelRotationMode','manual')
-fig.dim = [.85 .75];
+fig.dim = [.85 .25];
 fig.pos = @(x) ([.07 x]);
-% xgrid for Density estimate and plot
-xg  = linspace(-6,4,1e3)';              
-% xg  = linspace(-35,5,1e3)';              
+
 % compute the of the tstatistic density over xg grid
+xg  = linspace(-6,4,1e3)';              % xgrid for tstats
 t0  = ksdensity(tstat0, xg); 
 tC  = ksdensity(tstatC, xg);
 tCT = ksdensity(tstatCT,xg);
 
 % compute the density of T(rho_hat -1).
-% t0  = ksdensity(T*(rho0-1), xg); 
-% tC  = ksdensity((T-1)*(rhoC-1), xg);
-% tCT = ksdensity((T-1)*(rhoCT-1),xg);
+pxg = linspace(-35,5,1e3)';             % xgrid for T(rho_hat -1)
+p0  = ksdensity(T*(rho0-1), pxg); 
+pC  = ksdensity(T*(rhoC-1), pxg);
+pCT = ksdensity(T*(rhoCT-1),pxg);
  
-LW = 'LineWidth';
-clf;
-hold on;
+% plots of 
+figure(1);clf; 
+hold on; LG = [];
 LG(1) = plot(xg,t0);
 LG(2) = plot(xg,tC);
 LG(3) = plot(xg,tCT);
 LG(4) = plot(xg,normpdf(xg,0,1),'-k');
 hold off; 
 box on; grid on;
-setplot([fig.pos(.10) fig.dim],16,[],6/5);
+setplot([fig.pos(.30) fig.dim],16,[],6/5);
 set(gca,'GridLineStyle',':','GridAlpha',1/3);
+setyticklabels([0:0.1:0.6], 1)
 setoutsideTicks
 add2yaxislabel
 tickshrink(.9)
 
-legNames = {'$\tau_0$' ;
-       			'$\tau_{\mu}$' ;
-       			'$\tau_{\tau}$' ;
+legNames = {'$\tau_0=(\hat{\rho}_0-1)/se(\hat{\rho}_0)$' ;
+       			'$\tau_{\mu}=(\hat{\rho}_\mu-1)/se(\hat{\rho}_\mu)$' ;
+       			'$\tau_{\tau}=(\hat{\rho}_\tau-1)/se(\hat{\rho}_\tau)$' ;
        			'$N(0,1)$' }; 
 legendflex(LG,legNames,'Interpreter','Latex')
+
+%% plots
+figure(2);clf;
+hold on; LG = [];
+LG(1) = plot(pxg,p0);
+LG(2) = plot(pxg,pC);
+LG(3) = plot(pxg,pCT);
+hold off; 
+box on; grid on;
+setplot([fig.pos(.30) fig.dim],16,[],6/5);
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+setyticklabels([0:0.05:0.25])
+setoutsideTicks
+add2yaxislabel
+tickshrink(.9)
+
+legNames = {'$T(\hat{\rho}_0-1)$' ;
+       			'$T(\hat{\rho}_\mu-1)$' ;
+       			'$T(\hat{\rho}_\tau-1)$'}; 
+legendflex(LG,legNames,'Interpreter','Latex', 'anchor',[1 1])
+
+
+
+%% FAST OLS IN SAME FILE SO THAT YOU CAN SEE WHAT IS COMPUTED
+function [beta,se_beta] = fstols(y,X)
+  [T, k]  = size(X);
+  XpX			= X'*X;
+  invXpX	= XpX\eye(k);
+  beta		= invXpX*(X'*y);  % same as inv(X'*X)*(X'*y), 
+  % compute also OLS residuals and SSE = u'*u;
+  uhat		= y-X*beta;
+  se_beta = sqrt(diag(invXpX.*(uhat'*uhat)/T)); % same as sqrt(inv(X'*X)*Sigma2_hat)
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
