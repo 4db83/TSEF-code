@@ -16,6 +16,9 @@ if get_new_data
   disp('done saving the data')
 else
   load './data/real_gdp_US_2021Q4.mat';
+  % or read from .xlsx using readtable and then convert to timetable as used below
+%   tmp_tbl = readtable('./data/real_gdp_US_2021Q4.xlsx');
+%   usdata  = table2timetable(tmp_tbl(:,2:end), 'RowTimes', datetime(tmp_tbl{:,1},'InputFormat','dd.MM.yyyy'));
 end
 
 %% GENERATE Y = LOG-GDP AND DY = ANNUALIZED GPD GROWTH.
