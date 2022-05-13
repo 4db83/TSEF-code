@@ -26,12 +26,13 @@ C		= [c;Ok(:,1)];
 
 Sig = [sig Ok;...
 			 Ok Ok];
-	 
+	
+%% calculations with symbolic toolbox
 % lagploynomial (I - A1L - A2L) using symbolic math toolbox
 syms z
 AL		=  Ik - A1*z - A2*z^2;	% symbolic polynomial
 detAL = det(AL);							% det of symbolic polynomial
-%%
+%
 fprintf('Lag polynomial expression when evaluating det(AL) \n');
 fprintf(' %s \n\n', char(detAL));
 
@@ -73,7 +74,7 @@ Rhos(:,:,2) = inv(d)*gam1*inv(d);
 for j = (p+1):J
 	Gams(:,:,j) = A1*Gams(:,:,j-1) + A2*Gams(:,:,j-2);
 	Rhos(:,:,j) = inv(d)*Gams(:,:,j)*inv(d);
-end;
+end
 
 fprintf('\n----------------------------------------\n');
 fprintf('  		  ACVs				  ACFs \n');
@@ -92,15 +93,15 @@ psi = @(A,h) (S*A^h*S');
 % looping through different time horizons
 for jj = 1:H
 	Psi(:,:,jj) = psi(A,jj-1);
-end;
+end
 
-for h =	1:H;							
+for h =	1:H							
 	Xhat_h(:,h)		= S*(Mu + A^h*Xt);						% h-step ahead forecasts
 	SigU_h(:,:,h) = Psi(:,:,h)*sig*Psi(:,:,h)';	% h-step ahead Sig weiths that need to be summed.
 end
 
 % plot the forecasts 
-hold on;
+clf;hold on;
 plot(1:H,Xhat_h(1,:),'b');
 plot(1:H,Xhat_h(2,:),'r');
 hline(mu(1),':b');

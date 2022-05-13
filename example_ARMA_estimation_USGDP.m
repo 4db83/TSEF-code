@@ -114,7 +114,7 @@ for q = 1:(Q+1)
   end
 end
 	
-% Store the bic and aic matrices
+%% Store the bic and aic matrices
 AIC = [[nan (0:Q)];[(0:P)' AIC_pq]];
 BIC = [[nan (0:Q)];[(0:P)' BIC_pq]];
 HQC = [[nan (0:Q)];[(0:P)' HQC_pq]];

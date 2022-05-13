@@ -1,12 +1,12 @@
 clear all; clc;
-addpath('d:/matlab.tools/db.toolbox/')
+% addpath('d:/matlab.tools/db.toolbox/')
 
 % A = [0.4	0.1; 0.2	0.5];
 % S = [0.25	0.3; 0.3	0.9];
 % A = [ 0.9569265097 0.007330814144 ; -24.16479184  0.5478001881];
 % S = [14.2270332454324	-194.229041071163; -194.229041071163	22150.4568298334];
 
-% Lutkepolh exmple pages 56 onwards
+% Lutkepohl exmple pages 56 onwards
 A = [.5 0 0;.1 .1 .3;0 .2 .3];
 S = [2.25 0 0; 0 1 .5; 0 .5 .74];
 
@@ -15,7 +15,7 @@ P = chol(S)';
 d = diag(P);
 D = diag(d);
 %P = P*inv(D);
-N = 4;
+N = 20;
 k = size(A,1);
 irf = zeros(N+1,k^2);
 phi = zeros(k,k,N+1);
@@ -35,7 +35,7 @@ for i=1:N+1
   sphi(:,:,i) = sum(phiphi(:,:,1:i),3);
   diag_sphi(i,:) = (diag(sphi(:,:,i)))';
   %fevd(i,1) = sum(ej'*phi(:,:,i)*el)^2/diag_sphi(j)
-end;
+end
 fevd = sumirf2./repmat(diag_sphi,1,k);
 reshape(fevd,(N+1)*k,k)
 
