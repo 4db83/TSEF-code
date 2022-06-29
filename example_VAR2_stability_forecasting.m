@@ -1,6 +1,10 @@
-% VAR(2) stability and correlations
-clear all;clc;
-% set up parameters
+% Script: example_VAR2_stability_forecasting.m
+% Example of VAR(2) stability, covariances/correlations and forecasting.
+% uncomment print2pdf generate pdf from plot using the print2pdf function.
+clear; clc;
+% addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
+
+% SET UP PARAMETERS
 p = 2; % lag order
 k = 2; % number of variables
 
@@ -60,7 +64,7 @@ gam0	= Gam0(1:2,1:2);
 gam1	= Gam0(1:2,3:4);
 
 % computing the autocovariance and autocorrelation recursions for
-J			= 10;							% highest number of ACVs and ACFs to compute
+J	= 10;							% highest number of ACVs and ACFs to compute
 % ACVFs
 Gams	= zeros(k,k,J);
 Gams(:,:,1) = gam0;
@@ -83,8 +87,8 @@ disp([Gams Rhos])
 fprintf('----------------------------------------\n');
 
 %% forecasting 
-H		= 20;							% upper forecast horizon cap.
-Xt	= [1 2 3 4]';			% (pkx1) vector of Observed X_t at time t to use a base to forecast from.
+H		= 40;							% upper forecast horizon cap.
+Xt	= [1 2 3 4]';			% (pkx1) vector of observed (stacked) X_t at time t to use as conditioning info.
 % constructing the Psi weights
 Psi	= zeros(k,k,H);
 % create psi function
@@ -94,19 +98,34 @@ psi = @(A,h) (S*A^h*S');
 for jj = 1:H
 	Psi(:,:,jj) = psi(A,jj-1);
 end
-
+% initilize space
+Xhat_h = []; SigU_h = [];
 for h =	1:H							
-	Xhat_h(:,h)		= S*(Mu + A^h*Xt);						% h-step ahead forecasts
+  Xhat_h(:,h)		= S*(Mu + A^h*(Xt-Mu));						% h-step ahead forecasts
 	SigU_h(:,:,h) = Psi(:,:,h)*sig*Psi(:,:,h)';	% h-step ahead Sig weiths that need to be summed.
 end
 
-% plot the forecasts 
-clf;hold on;
-plot(1:H,Xhat_h(1,:),'b');
-plot(1:H,Xhat_h(2,:),'r');
-hline(mu(1),':b');
-hline(mu(2),':r');
+% PLOT THE FORECASTS
+% some plotting controls
+set(groot,'defaultLineLineWidth',2); % sets the default linewidth;
+set(groot,'defaultAxesXTickLabelRotationMode','manual')
+pl.fs = 18;
+pl.ps = @(x) ([.07 x .885 .70]);
+
+clf; 
+hold on;
+  plot(1:H,Xhat_h(1,:),'color',clr(1));
+  plot(1:H,Xhat_h(2,:),'color',clr(2));
 hold off;
+hline(mu(1),':',[],1.5,clr(1));
+hline(mu(2),':',[],1.5,clr(2));
+box on; grid on;
+ylim([0 1.4])
+setplot(pl.ps(.2),pl.fs,1,6/5)
+setgridlinestyle
+setoutsideTicks
+add2yaxislabel
+tickshrink(.5)
 
 % forecast error variance converges to gam0
 SigU_H = sum(SigU_h,3);
@@ -114,6 +133,34 @@ disp(' Forecast error variance matrix');
 disp(SigU_H)
 disp(' Gamma(0) covariance matrix');
 disp(gam0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
