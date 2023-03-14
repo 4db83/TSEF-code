@@ -3,7 +3,7 @@
 % https://github.com/4db83/db.toolbox/archive/refs/heads/main.zip. Unzip the contents locally
 % to the same directory as this script, and then uncomment the following line below:
 % addpath(genpath('./db.toolbox-main'))
-clear;clc;clf;
+clc; clear; clf;
 
 % parameter values
 e  = linspace(-1,1,1e3)';
@@ -22,45 +22,32 @@ LINLIN = @(e) ( b*abs(e).*I + a*abs(e).*(1-I)  );
 % clear plotting area and set default linewidth to 2
 clf; 
 set(groot,'defaultLineLineWidth',2); 
-Fns = 18; % font size
+% font size
+Fns = 17; 
+% plotting begins
 hold on; LG = [];
   LG(1) = plot(e,QEL(e));
   LG(2) = plot(e,AEL(e));
   LG(3) = plot(e,LINEX(e));
   LG(4) = plot(e,LINLIN(e));
-vline(0,'k:');
 hold off;
-box on; grid on;
-setplot([.80 .24], Fns, 1);
-set(gca,'GridLineStyle',':','GridAlpha',1/3);
-% ylim([-.25 1.05])
+vline(0,'k:');
+grid on; box on;
+setplot([.06 .6 .89 .24],1,Fns);
+% ylabel('$I\hspace{-1mm}L(e)$', 'Interpreter','latex'); moveylabel(-.01); 
+ylabel('$\mathrm{I\hspace{-.77mm}L}(e)$', 'Interpreter','latex'); moveylabel(-.01); 
 setoutsideTicks
-ylabel('$L(e)$', 'Interpreter','latex')
-moveylabel(-.01)
-xlabel('$e$', 'Interpreter','latex')
-movexlabel(-.05)
+xlabel('$e$', 'Interpreter','latex'); movexlabel(-.04); 
 add2yaxislabel
-tickshrink(.6)
 % add legend
 legnames = { 'Quadratic',...
              'Absolute',...
              'LinEx',...
              'LinLin'}; 
-legendflex(LG, legnames, 'fontsize', Fns - 1, 'anchor',[1 1],'Interpreter','Latex')
+addlegend(LG, legnames, 1, Fns - 1)
 
-% uncomment to print to pdf 
-% print2pdf('loss_functions_2022','../graphics')
-
-
-
-
-
-
-
-
-
-
-
+% UNCOMMENT TO PRINT TO PDF 
+% print2pdf('loss_functions_2022a','../graphics')
 
 
 

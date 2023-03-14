@@ -58,7 +58,7 @@ hline(7.5);hline(10);
 setoutsideTicks
 add2yaxislabel
 tickshrink(.9)
-subtitle('(a) Log of US real GDP (level series)', fig.st)
+addsubtitle('(a) Log of US real GDP (level series)', fig.st)
 % legendflex(LG,{'T-Bill','FFR'}, 'fontsize', Fns, 'anchor',[1 1],'Interpreter','Latex')
 
 subplot(2,1,2)
@@ -77,14 +77,14 @@ ylim([-12 16])
 setoutsideTicks
 add2yaxislabel
 tickshrink(.9)
-subtitle('(b) First difference of log of US real GDP (annualized growth rate)', fig.st)
+addsubtitle('(b) First difference of log of US real GDP (annualized growth rate)', fig.st)
 % uncomment to print to pdf
 % print2pdf('USGDP_level_growth','../graphics')
 
 %% PLOT SAMPLE ACF/PACF OF ANNUALIZED GDP 
 figure(2);
 plotacf(usdata.dy);
-subtitle('Sample ACF/PACF of US GDP growth', [-1.35 -.66], 20)
+addsubtitle('Sample ACF/PACF of US GDP growth', [-1.35 -.66], 20)
 % uncomment to print to pdf
 % print2pdf('acf_USGDP_growth','../graphics')
 
@@ -155,7 +155,7 @@ ylim([-12 16])
 setoutsideTicks
 add2yaxislabel
 tickshrink(.9)
-subtitle('(a) Actual and fitted values', fig.st)
+addsubtitle('(a) Actual and fitted values', fig.st)
 legendflex(LG,{'GDP growth','AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor',3.*[1 1],'Interpreter','Latex')
 
 subplot(2,1,2)
@@ -177,7 +177,7 @@ ylim([-12 16])
 setoutsideTicks
 add2yaxislabel
 tickshrink(.9)
-subtitle('(b) Residuals', fig.st)
+addsubtitle('(b) Residuals', fig.st)
 legendflex(LG,{'AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor',3.*[1 1],'Interpreter','Latex')
 % uncomment to print to pdf 
 % print2pdf('fitted_values_US','../graphics');
@@ -186,13 +186,13 @@ legendflex(LG,{'AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor
 % plot sample acf/pacf of the residual series of model selected by BIC and AIC
 figure(4);
 plotacf(arma_bic.uhat);
-subtitle('Sample ACF/PACF of residuals from BIC model', [-1.35 -.66], 20)
+addsubtitle('Sample ACF/PACF of residuals from BIC model', [-1.35 -.66], 20)
 % uncomment to print to pdf
 % print2pdf('acf_arma_bic_fit','../graphics')
 
 figure(5);
 plotacf(arma_aic.uhat);
-subtitle('Sample ACF/PACF of residuals from AIC model', [-1.35 -.66], 20)
+addsubtitle('Sample ACF/PACF of residuals from AIC model', [-1.35 -.66], 20)
 % uncomment to print to pdf
 % print2pdf('acf_arma_aic_fit','../graphics')
  
@@ -203,7 +203,7 @@ bL_bic = [1  arma_bic.pars((p_bic-1)+2:end)'];
 % plot theoretical ACF/PACF values of fitted model to visually compare to sample ACF/PACF
 figure(6);
 plotacf0(aL_bic,bL_bic);
-subtitle('Theoretical ACF/PACF of BIC model', [-1.35 -.66], 20)
+addsubtitle('Theoretical ACF/PACF of BIC model', [-1.35 -.66], 20)
 % uncomment to print to pdf
 % print2pdf('acf0_ar1', '../graphics');
 
