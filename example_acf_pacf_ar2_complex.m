@@ -1,8 +1,5 @@
 % Script: example_acf_pacf_ar2_complex.m
-% NOTE: To be able to run this code, you need the contents of the db.toolbox available from:
-% https://github.com/4db83/db.toolbox/archive/refs/heads/main.zip. Unzip the contents locally
-% to the same directory as this script, and then uncomment the following line below:
-% addpath(genpath('./db.toolbox-main'))
+addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
 clear;clc;clf;
 
 % lag polynomial
@@ -58,36 +55,30 @@ tspc = .34;       % topspace
 % 2x2 grid of plots
 subplot(2,2,1);
   bar(acf_t(2:end), 'FaceColor', [.7 .8 1]);
-box on; grid on;
-setplot([.15 .6 dims], fns);
+setplot([.15 .6 dims], 1, fns);
 setyticklabels([-1:.2:1], 1); 
-set(gca,'GridLineStyle',':','GridAlpha',1/3);
-tickshrink(.8)
 setoutsideTicks
-subtitle('(a) Theoretical ACF', stp)
+addsubtitle('(a) Theoretical ACF', stp)
 
 subplot(2,2,2);
   bar(pacf_t(2:end), 'FaceColor', [.7 .8 1]);
-box on; grid on;
-setplot([.55 .6 dims], fns);
+setplot([.55 .6 dims], 1, fns);
 setyticklabels([-1:.2:1], 1); 
-set(gca,'GridLineStyle',':','GridAlpha',1/3);
-tickshrink(.8)
 setoutsideTicks
-subtitle('(b) Theoretical PACF', stp)
+addsubtitle('(b) Theoretical PACF', stp)
 
 subplot(2,2,3:4);
   plot(x)
 hline(0)
-box on; grid on;
-setplot([.15 tspc .70 .2], fns);
+setplot([.15 tspc .70 .2], 0, fns);
 setyticklabels([-8:2:10], 0); 
-set(gca,'GridLineStyle',':','GridAlpha',1/3);
-tickshrink(.8)
-setoutsideTicks
-subtitle('(c) Time series plot', stp)
+setoutsideTicks; add2yaxislabel;
+addsubtitle('(c) Time series plot', stp)
 
-% COMPUTING THE ACF FROM THE MA(INF) REPRESENTATION OF THE AR MODEL.
+% UNCOMMENT TO PRINT TO PDF 
+% print2pdf('example_acf_pacf_ar2_complex', 1)
+
+%% COMPUTING THE ACF FROM THE MA(INF) REPRESENTATION OF THE AR MODEL.
 N   = 1e3;              % approximation order
 b		= arma2ma(aL,1,N);	% MA(inf) beta coefficients.
 g0  = b'*b;							% variance.
@@ -97,18 +88,43 @@ for i = 1:N
 end
 acf_MA_inf = gg./g0;
 
+clf
 subplot(2,2,1);
   bar(acf_MA_inf(1:50), 'FaceColor', [.7 .8 1]);
-box on; grid on;
-setplot([.15 .6 dims], fns);
+setplot([.15 .6 dims], 1, fns);
 setyticklabels([-1:.2:1], 1); 
-set(gca,'GridLineStyle',':','GridAlpha',1/3);
-tickshrink(.8)
 setoutsideTicks
-subtitle('(a) Theoretical ACF', stp)
+addsubtitle('(a) Theoretical ACF', stp)
 
-% uncomment to print to pdf 
-% print2pdf('example_acf_pacf_ar2_complex','../graphics')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
