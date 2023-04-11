@@ -1,6 +1,6 @@
 % Script: plot_MA1_rho_beta_mapping.m
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 
 % create inline function
 f = inline('b./(1+b.^2)','b');

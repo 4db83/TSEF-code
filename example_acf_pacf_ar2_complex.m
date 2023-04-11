@@ -1,6 +1,6 @@
 % Script: example_acf_pacf_ar2_complex.m
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 
 % lag polynomial
 a1 = 1.4; a2 = -0.85;
@@ -80,7 +80,7 @@ addsubtitle('(c) Time series plot', stp)
 
 %% COMPUTING THE ACF FROM THE MA(INF) REPRESENTATION OF THE AR MODEL.
 N   = 1e3;              % approximation order
-b		= arma2ma(aL,1,N);	% MA(inf) beta coefficients.
+b		= arma2ma(aL,10,N); % MA(inf) beta coefficients.
 g0  = b'*b;							% variance.
 gg  = zeros(N,1);
 for i = 1:N

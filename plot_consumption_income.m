@@ -1,6 +1,6 @@
 % plot consumption and disposable income data for the US to replicate Hamilton figure on page 601
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 
 % get data from FREDwebsite if not in ./data/ directory
 usdat = as_timetable(getFredData('pcecc96', '1947-01-01', '2021-12-31','lin','q'),'pcecc96');

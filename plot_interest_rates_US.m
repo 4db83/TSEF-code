@@ -1,6 +1,6 @@
 % plot US interest rates: TB3MS 3-Month Treasury Bill Secondary Market Rate, Federal Funds Effective Rate (DFF)
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 % % get data from FREDwebsite if not in ./data/ directory
 % usdat = as_timetable(                  getFredData('TB3MS'  , '1934-01-01', '2023-02-01','lin','m'),'Tbill');
 % usdat = synchronize(usdat,as_timetable(getFredData('DFF'    , '1947-01-01', '2023-02-01','lin','m'),'ffrate'));

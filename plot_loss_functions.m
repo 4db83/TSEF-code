@@ -1,6 +1,6 @@
 % Script: plot_loss_functions.m
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 
 % parameter values
 e  = linspace(-1,1,1e3)';

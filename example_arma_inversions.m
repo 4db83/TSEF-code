@@ -1,13 +1,14 @@
 % example ARMA to MA(infty) and ARMA to AR(infty) using Matlabs polynomial division function 
 % deconvolution 
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 
 R  = 10;                    % number of terms in the inversion.
 a1 = 0.5; a2 = -0.8;    
 b1 =-0.6; b2 =  0.08;
 
 b  = [b1 0.1 0 0 0 0 0 0 0 0.1 0.001]; %b = b1;
-a  = [a1 a2 0 0 0 00 0 0.1 0.1 0.001]; %a = a1;
+a  = [a1 a2  0 0 0 0 0 0.1 0.1 0.001]; %a = a1;
 aL = [1 -a];
 bL = [1 b];
 

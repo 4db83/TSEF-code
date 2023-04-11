@@ -1,6 +1,6 @@
 %Script: plot_kernels
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 
 % parameter values
 z  = linspace(0,3,100)';

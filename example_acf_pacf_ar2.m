@@ -1,6 +1,6 @@
 % Script: example_acf_pacf_ar2.m
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 
 % lag polynomial
 a1  = 1.5 ; a2 =-0.56;

@@ -1,6 +1,6 @@
 % plot US retail trade, seasonally unadjusted.
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 % % get data from FREDwebsite if not in ./data/ directory
 % usdat = as_timetable(getFredData('RSXFSN', '1947-01-01', '2021-12-31','lin','m'),'RetailSales');
 % % usdat = synchronize(usdat,as_timetable(getFredData('USRECQ', '1947-01-01', '2021-12-31','lin','q'),'NBER'));

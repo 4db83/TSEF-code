@@ -1,6 +1,6 @@
 % Script: example_acf_non_invertible_ma2.m
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 
 % MA lag polynomial
 b1 = -3.5 ; b2 = -2;

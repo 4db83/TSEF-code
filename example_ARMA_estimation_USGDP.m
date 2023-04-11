@@ -1,7 +1,7 @@
 % Script: example_ARMA_estimation_USGDP.m
 % Example of ARMA model fitted to US Real GDP;
-addpath(genpath('D:/matlab.tools/db.toolbox/db/'))
-clear;clc;clf;
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
 % set to 1 to get new data
 get_new_data = 0;
 
@@ -128,6 +128,8 @@ arma_bic = estimate_armax(usdata.dy,1,1:(p_bic-1),1:(q_bic-1)); print_arma_resul
 arma_hqc = estimate_armax(usdata.dy,1,1:(p_hqc-1),1:(q_hqc-1)); print_arma_results(arma_hqc);
 
 %% PLOT ACTUAL AND FITTED VALUES/RESIDUALS
+% recession bar color
+rec_CLR = .83*ones(3,1); 
 figure(3);
 subplot(2,1,1)
 hold on; LG = [];
