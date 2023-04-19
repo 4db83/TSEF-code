@@ -79,6 +79,8 @@ addsubtitle('(c) Time series plot', stp)
 % print2pdf('example_acf_pacf_ar2_complex', 1)
 
 %% COMPUTING THE ACF FROM THE MA(INF) REPRESENTATION OF THE AR MODEL.
+% open these in new figure
+figure(2)
 N   = 1e3;              % approximation order
 b		= arma2ma(aL,10,N); % MA(inf) beta coefficients.
 g0  = b'*b;							% variance.
