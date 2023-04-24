@@ -12,7 +12,8 @@ addpath(genpath('./db.toolbox/'))
 load('./data/retail_sales_US_2022M1.mat')
 % usdat.c = log(usdat.pcecc96);
 % usdat.y = log(usdat.dpic96);
-tt = timerange('01-Jan-1992', '01-Jan-2022', 'closed');
+% tt = timerange('01-Jan-1992', '01-Jan-2022', 'closed');
+tt = timerange('Jan-1992', 'Dec-2022', 'closed');
 % tt = timerange('Q1-1947', 'Q4-2021', 'closed');
 ss_usdat = usdat(tt,:);
 head2tail(ss_usdat);
