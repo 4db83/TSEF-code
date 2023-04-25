@@ -2,8 +2,9 @@
 % Simulation of Dickey-Fuller critical values. Cleaned up. does not require fastols anymore, uses
 % fstols function defined at the end of this script.
 % uncomment print2pdf generate pdf from plot using the print2pdf function.
-clear; clc;
-% addpath(genpath('PATH-TO-FOLDER/db.toolbox'))
+clear; clc; clf;
+addpath(genpath('./db.toolbox/'))
+
 % some controls
 N     = 1e5;
 T     = 500;
@@ -26,9 +27,9 @@ for jj = 1:N
   X = y(1:end-1);		  % y(t-1)
 
 	% run the 3 separate regressions
-  [bhat,se]      = fstols(Y,X);  
-  [Cbhat,Cse]    = fstols(Y,[X C]);
-  [CTbhat,CTse]  = fstols(Y,[X C trnd]);
+  [bhat,se]      = fastols(Y,X);  
+  [Cbhat,Cse]    = fastols(Y,[X C]);
+  [CTbhat,CTse]  = fastols(Y,[X C trnd]);
   
   % store bhat (rho_hat) coeffcients
   rho0(jj) 		= bhat(1);
@@ -123,15 +124,11 @@ legNames = {'$T(\hat{\rho}_0-1)$' ;
 legendflex(LG,legNames,'Interpreter','Latex', 'anchor',[1 1])
 
 %% FAST OLS IN SAME FILE SO THAT YOU CAN SEE WHAT IS COMPUTED
-function [beta,se_beta] = fstols(y,X)
+function [beta,se_beta] = fastols(y,X)
   [T, k]  = size(X);
-  XpX			= X'*X;
-  invXpX	= XpX\eye(k);
-  beta		= invXpX*(X'*y);  % same as inv(X'*X)*(X'*y), 
   beta    = X\y;
-  % compute also OLS residuals and SSE = u'*u;
   uhat		= y-X*beta;
-  se_beta = sqrt(diag(invXpX.*(uhat'*uhat)/T)); % same as sqrt(inv(X'*X)*Sigma2_hat)
+  se_beta = sqrt(diag(inv(X'*X)*(uhat'*uhat)/T));
 end
 
 

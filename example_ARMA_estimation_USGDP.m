@@ -8,14 +8,17 @@ get_new_data = 0;
 if get_new_data
   % get data from FRED2
   % Billions of Chained 2012 Dollars, Seasonally Adjusted Annual Rate
-  usdata = as_timetable(getFredData('GDPC1', '1947-01-01', '2021-12-31','lin','q'),'gdpc1'); 
-  usdata = synchronize(usdata, as_timetable(getFredData('USRECQ', '1947-01-01', '2021-12-31','lin','q'),'NBER'));
-  save('./data/real_gdp_US_2021Q4.mat', 'usdata');
+  T1 = datestr(datenum('Q4-2022','qq-yyyy'),'yyyy-mm-dd');
+  T0 = datestr(datenum('Q1-1947','qq-yyyy'),'yyyy-mm-dd');
+  usdata = as_timetable(getFredData('GDPC1', T0, T1,'lin','q'),'gdpc1'); 
+  usdata = synchronize(usdata, as_timetable(getFredData('USRECQ', T0, T1,'lin','q'),'NBER'));
+  save('./data/real_gdp_US_2022Q4.mat', 'usdata');
   % print/export to xlsx if needed
-  print2xls(usdata,'/data/real_gdp_US_2021Q4.xlsx')
+  print2xls(usdata,'/data/real_gdp_US_2022Q4.xlsx')
   disp('done saving the data')
 else
-  load './data/real_gdp_US_2021Q4.mat';
+  % load './data/real_gdp_US_2021Q4.mat';
+  load './data/real_gdp_US_2022Q4.mat';
   % OR READ FROM .XLSX USING READTABLE AND THEN CONVERT TO TIMETABLE AS USED BELOW
 %   tmp_tbl = readtable('./data/real_gdp_US_2021Q4.xlsx');
 %   usdata  = table2timetable(tmp_tbl(:,2:end), 'RowTimes', datetime(tmp_tbl{:,1},'InputFormat','dd.MM.yyyy'));
@@ -27,6 +30,7 @@ usdata.dy = 400*(usdata.y - lag(usdata.y,1));
 % % uncomment to write to csv file 
 % writetimetable(usdata,'real_gdp_US_2021Q4.csv','Delimiter',',')
 ss = timerange('Q1-1947', 'Q4-2019', 'closed');
+% ss = timerange('Q1-1947', 'Q4-2022', 'closed');
 usdata = usdata(ss,:);
 % head2tail(usdata);
 T2 = 151; % break in volatility
@@ -35,7 +39,7 @@ T2 = 151; % break in volatility
 set(groot,'defaultLineLineWidth',2); % sets the default linewidth;
 set(groot,'defaultAxesXTickLabelRotationMode','manual')
 % plot controls
-fig.ds  = 23;
+fig.ds  = 33;
 fig.fs  = 19;
 fig.st  = -1.21;
 fig.dim = [.85 .2];
@@ -55,22 +59,23 @@ setoutsideTicks
 add2yaxislabel
 addsubtitle('(a) Log of US real GDP (level series)', fig.st)
 
-% subplot(2,1,2)
-% hold on;
-%   addrecessionBars(-usdata.NBER, [-12 18]); 
-%   plot(usdata.dy,'Color',clr(1));
-% hold off; vline(T2,'r:'); 
-% box on; grid on;
-% setplot([fig.pos(.34) fig.dim],[],[],6/5);
-% setyticklabels(-12:4:16, 0)
-% setdateticks(usdata.Time, fig.ds, 'yyyy:QQ', fig.fs);	
-% set(gca,'GridLineStyle',':','GridAlpha',1/3);
-% hline(-12);hline(16);hline(0);
-% ylim([-12 16])
-% setoutsideTicks
-% add2yaxislabel
-% tickshrink(.9)
-% addsubtitle('(b) First difference of log of US real GDP (annualized growth rate)', fig.st)
+subplot(2,1,2)
+hold on;
+  addrecessionBars(usdata.NBER, [-12 18]); 
+  plot(usdata.dy,'Color',clr(1));
+hold off; vline(T2,'r:'); 
+box on; grid on;
+setplot([fig.pos(.34) fig.dim],[],[],6/5);
+setyticklabels(-12:4:18, 0)
+setdateticks(usdata.Time, fig.ds, 'yyyy:QQ', fig.fs);	
+set(gca,'GridLineStyle',':','GridAlpha',1/3);
+hline(-12);hline(16);hline(0);
+ylim([-12 16])
+setoutsideTicks
+add2yaxislabel
+tickshrink(.9)
+addsubtitle('(b) First difference of log of US real GDP (annualized growth rate)', fig.st)
+
 % UNCOMMENT TO PRINT TO PDF
 % print2pdf('USGDP_level_growth','../graphics')
 

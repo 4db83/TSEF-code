@@ -1,6 +1,5 @@
-% Script: example_VAR2_stability_forecasting.m
-% Example of VAR(2) stability, covariances/correlations and forecasting.
-% uncomment print2pdf generate pdf from plot using the print2pdf function.
+% Script: example_VAR2_moments_stability.m
+% Example of VAR(2) stability, mean and covariances/correlations computation.
 clear; clc; clf;
 addpath(genpath('./db.toolbox/'))
 
