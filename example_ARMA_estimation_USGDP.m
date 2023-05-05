@@ -29,8 +29,8 @@ usdata.y  = log(usdata.gdpc1);
 usdata.dy = 400*(usdata.y - lag(usdata.y,1));
 % % uncomment to write to csv file 
 % writetimetable(usdata,'real_gdp_US_2021Q4.csv','Delimiter',',')
-ss = timerange('Q1-1947', 'Q4-2019', 'closed');
-% ss = timerange('Q1-1947', 'Q4-2022', 'closed');
+% ss = timerange('Q1-1947', 'Q4-2019', 'closed');
+ss = timerange('01.01.1947', '31.12.2019', 'closed');
 usdata = usdata(ss,:);
 % head2tail(usdata);
 T2 = 151; % break in volatility
