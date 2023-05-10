@@ -3,7 +3,7 @@
 % fstols function defined at the end of this script.
 % uncomment print2pdf generate pdf from plot using the print2pdf function.
 clear; clc; clf;
-addpath(genpath('./Code-TSEF/db.toolbox/'))
+addpath(genpath('./db.toolbox/'))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A. Computer Exercises 1)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
