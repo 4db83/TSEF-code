@@ -1,6 +1,6 @@
 % Script: example_VAR2_moments_stability.m
 % Example of VAR(2) stability, mean and covariances/correlations computation.
-clear; clc; clf;
+clear; clc; % clf;
 addpath(genpath('./db.toolbox/'))
 
 % SET UP PARAMETERS
