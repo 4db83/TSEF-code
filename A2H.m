@@ -85,11 +85,11 @@ end
 % PLOTS 
 set(groot,'defaultLineLineWidth',1.5);  % sets the default linewidth for all lines in plot                                ;
 set(groot,'defaultAxesXTickLabelRotationMode','manual')
-fig.dim = [.85 .6];
+fig.dim = [.85 .7];
 fig.pos = @(x) ([.07 x]);
 
 % plot DF t-statistic distribution
-figure(1); clf;
+set(figure(1), 'WindowStyle', 'Docked'); clf;
 hold on; LG = [];
 LG(1) = plot(xg,t0);
 LG(2) = plot(xg,tC);
@@ -149,7 +149,7 @@ cycl_BN_MA1 =  -arma01.pars(2)*arma01.uhat;
 [cycl,trnd] = hp_filter(usdata.y, 1600);
 
 %plot the HP-filter and BN decomposition cycles/temporary components
-figure(2); clf;
+set(figure(2), 'WindowStyle', 'Docked'); clf;
 hold on; LG = [];
 addrecessionBars(usdata.NBER,[-6.5,4.5])
 LG(1) = plot(100*cycl, 'Color',clr(1));
@@ -173,8 +173,6 @@ legNames = {'HP-Filter Cycle';
 %        			'$N(0,1)$' }; 
 addlegend(LG,legNames,3)
 % print2pdf('HPvsBN',1)
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
