@@ -3,7 +3,7 @@
 clear; clc; clf;
 addpath(genpath('./db.toolbox/'))
 % set to 1 to get new data
-get_new_data = 0;
+get_new_data = 1;
 
 if get_new_data
   % get data from FRED2
@@ -15,6 +15,10 @@ if get_new_data
   save('./data/real_gdp_US_2022Q4.mat', 'usdata');
   % print/export to xlsx if needed
   print2xls(usdata,'/data/real_gdp_US_2022Q4.xlsx')
+  % write also to parquet file for easy reading in R
+  parquetwrite('./data/real_gdp_US_2022Q4.parquet',usdata)
+  % save also in traditional matlab format
+  save('./data/real_gdp_US_2022Q4.mat', 'usdata');
   disp('done saving the data')
 else
   % load './data/real_gdp_US_2021Q4.mat';

@@ -118,8 +118,10 @@ addsubtitle('Distribution of the $t-$statistic',-1.15,18)
 % https://github.com/4db83/code-TSEF/raw/main/data/real_gdp_US_2022Q4.mat
 % this downloads the data and stores it locally in the current directory
 websave('US_data.mat','https://github.com/4db83/code-TSEF/raw/main/data/real_gdp_US_2022Q4.mat');
-% loads the data you have downloaded, which is called: usdata
-load('US_data.mat')
+% LOADS THE DATA YOU HAVE DOWNLOADED, WHICH IS CALLED: USDATA
+load('US_data.mat') 
+% or  
+% load('./data/real_gdp_US_2022Q4.mat');
 % GENERATE Y = LOG-GDP AND DY = ANNUALIZED GPD GROWTH.
 usdata.y  = log(usdata.gdpc1);
 usdata.dy = 100*(usdata.y - lag(usdata.y,1));
