@@ -17,9 +17,9 @@ rho   = 1;
 rng(123)
 
 % space allocation for storage of tstats and coeffs
-tstat0  = zeros(N,1);   rho0 = zeros(N,1);
-tstatC  = zeros(N,1);   rhoC = zeros(N,1);
-tstatCT = zeros(N,1);   rhoCT= zeros(N,1);
+tstat0  = zeros(N,1);   rho0  = zeros(N,1);
+tstatC  = zeros(N,1);   rhoC  = zeros(N,1);
+tstatCT = zeros(N,1);   rhoCT = zeros(N,1);
 
 % -----------------------------------------------------------------------------------------
 % MAIN LOOP TO GENERATE RW SERIES AND ESTIMATE 3 DIFFERENT UNIT ROOT TESTING REGRESSIONS
@@ -111,7 +111,6 @@ addlegend(LG,legNames,1)
 addsubtitle('Distribution of the $t-$statistic',-1.15,18)
 % print2pdf('DF_tdistr',1)
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% A. Computer Exercises 2)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,6 +119,8 @@ addsubtitle('Distribution of the $t-$statistic',-1.15,18)
 websave('US_data.mat','https://github.com/4db83/code-TSEF/raw/main/data/real_gdp_US_2022Q4.mat');
 % LOADS THE DATA YOU HAVE DOWNLOADED, WHICH IS CALLED: USDATA
 load('US_data.mat') 
+% Name Date column correctly
+usdata.Properties.DimensionNames{1} = 'Date';
 % or  
 % load('./data/real_gdp_US_2022Q4.mat');
 % GENERATE Y = LOG-GDP AND DY = ANNUALIZED GPD GROWTH.
@@ -129,23 +130,42 @@ usdata.dy = 100*(usdata.y - lag(usdata.y,1));
 ss = timerange('Q1-1947', 'Q4-2019', 'closed');
 % ss = timerange('01.01.1947', '31.12.2019', 'closed');
 usdata = usdata(ss,:);
+Dates  = usdata.Properties.RowTimes;
 
 % ESTIMATE ARMA(1,1) MODEL
 arma11 = estimate_armax(usdata.dy,1, 1,1); print_arma_results(arma11);
 arma01 = estimate_armax(usdata.dy,1, 0,1); print_arma_results(arma01);
 arma10 = estimate_armax(usdata.dy,1, 1,0); print_arma_results(arma10);
+% USING MATLAB PROPRIETARY ECONOMETRICS TOOLBOX 
+% arma11_ET = estimate(arima(1,0,1),usdata.dy);
+% arma01_ET = estimate(arima(0,0,1),usdata.dy);
+% arma10_ET = estimate(arima(1,0,0),usdata.dy);
 
-% BN-decompositions based on the lecture notes examples
+%% BN-decompositions based on the lecture notes examples
 % BN Based on an AR(1)
 mu_AR1      = arma10.pars(1)/(1 - arma10.pars(2));
 trnd_BN_AR1 = usdata.y + arma10.pars(2)/(1 - arma10.pars(2))*(usdata.dy - mu_AR1);
 cycl_BN_AR1 = usdata.y - trnd_BN_AR1;
 
 % BN base on an MA(1)
-cycl_BN_MA1 =  -arma01.pars(2)*arma01.uhat;
+cycl_BN_MA1 = -arma01.pars(2)*[NaN; arma01.uhat];
 
-% YOU NEED TO FIND THE AMRMA(1,1) CYCLE BY HAND ALGEBRAICALLY
-% THEN SIMPLY ADD TO THE PLOT
+% BN base on an ARMA(1,1)
+mu_ARMA11      = arma11.pars(1)/(1 - arma11.pars(2));
+kk = arma11.pars(2)*(usdata.dy - mu_ARMA11) - arma11.pars(3)*[NaN; arma11.uhat];
+trnd_BN_ARMA11 = usdata.y + arma11.pars(2)/(1 - arma11.pars(2))*kk;
+cycl_BN_ARMA11 = usdata.y - trnd_BN_ARMA11;
+% add them to the usdata base
+usdata.BN_AR1     = cycl_BN_AR1;
+usdata.BN_MA1     = cycl_BN_MA1;
+usdata.BN_ARMA11  = cycl_BN_ARMA11;
+
+% % compare to the R estiamtes
+% R = (parquetread('R_cycles.parquet')); % R cycles only
+% R.Properties.DimensionNames{1} = 'Date'
+% M = usdata(:,end-2:end); % matlab cycles only
+% all = join(M,R)
+% parquetwrite('R_out.parquet',R)
 
 % HP-filter cycle
 [cycl,trnd] = hp_filter(usdata.y, 1600);
@@ -154,28 +174,28 @@ cycl_BN_MA1 =  -arma01.pars(2)*arma01.uhat;
 set(figure(2), 'WindowStyle', 'Docked'); clf;
 hold on; LG = [];
 addrecessionBars(usdata.NBER,[-6.5,4.5])
-LG(1) = plot(100*cycl, 'Color',clr(1));
-LG(2) = plot(cycl_BN_AR1, 'Color',clr(2));
-LG(3) = plot(cycl_BN_MA1, 'Color',clr(3));
+LG(1) = plot(100*cycl,      'Color',clr(1));
+LG(2) = plot(cycl_BN_AR1,   'Color',clr(2));
+LG(3) = plot(cycl_BN_MA1,   'Color',clr(3));
+LG(4) = plot(cycl_BN_ARMA11,'Color',clr(4));
 hold off; hline(0)
 box on; grid on;
 setplot([fig.pos(.2) fig.dim],2,16,3/4);
 % set(gca,'GridLineStyle',':','GridAlpha',1/3);
-setyticklabels(-6:2:4,0);ylim([-6.5 4.5])
-setdateticks(usdata.Time, 22, 'yyyy:QQ');	
+setyticklabels(-6:2:4,0); 
+ylim([-6.5 4.5])
+setdateticks(Dates, 22, 'yyyy:QQ');	
 % setyticklabels([0:0.1:0.6], 1)
 setoutsideTicks
 add2yaxislabel
 
-legNames = {'HP-Filter Cycle';
-            'BN-AR(1) Cycle' ;
-            'BN-MA(1) Cycle'};
-%        			'$\tau_{\mu}$ with constant' ;
-%        			'$\tau_{\tau}$ with constant and trend' ;
-%        			'$N(0,1)$' }; 
+legNames = {'HP-Filter Cycle'   ;
+            'BN-AR(1) Cycle'    ;
+            'BN-MA(1) Cycle'    ; 
+            'BN-ARMA(1,1) Cycle';
+            };
 addlegend(LG,legNames,3)
 % print2pdf('HPvsBN',1)
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SPECIAL FAST OLS FUNCTION IN SAME FILE SO THAT YOU CAN SEE WHAT IS COMPUTED

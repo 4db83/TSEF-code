@@ -47,8 +47,8 @@ subplot(1,k,1)
   xlim([0 15])
 setplot([.12 POS],[],FNS)
 % add2yaxislabel
-addlegend({'$U_1$','$U_2$'})
-addsubtitle('Response of $X_1$ to shocks in', PS2)
+addlegend({'$u_1$','$u_2$'})
+addsubtitle('Response of $x_1$ to shocks in', PS2)
 hline(0,'k-');
 
 subplot(1,k,2);
@@ -58,8 +58,8 @@ subplot(1,k,2);
   xlim([0 15])
 setplot([ .55 POS],[],FNS)
 % add2yaxislabel
-addlegend({'$U_1$','$U_2$'})
-addsubtitle('Response of $X_2$ to shocks in', PS2)
+addlegend({'$u_1$','$u_2$'})
+addsubtitle('Response of $x_2$ to shocks in', PS2)
 hline(0,'k-');
 
 % % UNCOMMENT TO PRINT TO PDF 
