@@ -149,9 +149,10 @@ cycl_BN_MA1 = -arma01.pars(2)*[NaN; arma01.uhat];
 
 % BN base on an ARMA(1,1)
 mu_ARMA11      = arma11.pars(1)/(1 - arma11.pars(2));
-kk = arma11.pars(2)*(usdata.dy - mu_ARMA11) - arma11.pars(3)*[NaN; arma11.uhat];
-trnd_BN_ARMA11 = usdata.y + arma11.pars(2)/(1 - arma11.pars(2))*kk;
+kk = arma11.pars(2)*(usdata.dy - mu_ARMA11) + arma11.pars(3)*[NaN; arma11.uhat];
+trnd_BN_ARMA11 = usdata.y + kk/(1 - arma11.pars(2));
 cycl_BN_ARMA11 = usdata.y - trnd_BN_ARMA11;
+
 % add them to the usdata base
 usdata.BN_AR1     = cycl_BN_AR1;
 usdata.BN_MA1     = cycl_BN_MA1;

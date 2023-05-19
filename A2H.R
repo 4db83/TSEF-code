@@ -117,8 +117,8 @@ cycl_BN_MA1 =  -arma01$coef[1]*arma01$residuals
 
 # BN Based on an ARMA(1)
 mu_ARMA11     = arma11$coef[3];
-kk = arma11$coef[1]*(usdata$dy - mu_ARMA11) - arma11$coef[2]*arma11$residuals
-trnd_BN_ARMA11 = usdata$y + arma11$coef[1]/(1 - arma11$coef[1])*kk
+kk = arma11$coef[1]*(usdata$dy - mu_ARMA11) + arma11$coef[2]*arma11$residuals
+trnd_BN_ARMA11 = usdata$y + kk/(1 - arma11$coef[1])
 cycl_BN_ARMA11 = usdata$y - trnd_BN_ARMA11
 
 # HP-FILTER
