@@ -15,8 +15,8 @@ pacman::p_load(forecast, matlab, tidyverse, readxl, arrow, curl, mFilter)
 cat("\014")
 set.seed(123)
 
-#---------- A. Computer Exercises 1)
-N = 1e2
+# A. Computer Exercises 1) ------
+N = 1e4
 T = 170 + 1
 # generate (T+1)*(N) matrix of standard normal random numbers
 matNorm = matrix(rnorm(T*N,0,1),nrow = T,ncol = N)
@@ -30,7 +30,7 @@ rho0   = zeros(N,1); rhoC   = zeros(N,1); rhoCT   = zeros(N,1)
 tstat0 = zeros(N,1); tstatC = zeros(N,1); tstatCT = zeros(N,1)
 
 tic()
-# DF regression
+# DF regressions
 for (ii in 1:N) {
   y1 = matRW[1:T-1,ii]
   y  = matRW[2:T,  ii]
@@ -77,8 +77,7 @@ DF = rbind( qnorm(pctls),
 )
 round(DF,digits = 4)
 
-
-#---------- A. Computer Exercises 2) ----
+# A. Computer Exercises 2) ----
 # get the US data from GitHub # download.file(.) seems to create problems reading the file
 # temp_file_p = tempfile(); curl_download(url = 'https://github.com/4db83/TSEF-code/raw/main/data/real_gdp_US_2022Q4.parquet',destfile = temp_file_p)
 temp_file_  = tempfile(); curl_download(url = 'https://github.com/4db83/TSEF-code/raw/main/data/real_gdp_US_2022Q4.xlsx', destfile = temp_file_)
@@ -131,7 +130,7 @@ cycles$BN_AR1     = cycl_BN_AR1
 cycles$BN_MA1     = cycl_BN_MA1
 cycles$BN_ARMA11  = cycl_BN_ARMA11
 cycles$HP         = 100*hp$cycle
-head(cycles)
+# head(cycles)
 # write_parquet(cycles,"R_cycles.parquet")
 
 # PLOTTING ---------
@@ -156,7 +155,8 @@ legend(10700, 4.8,
 
 cat("\014")
 
-
+# print the DF critical values table here 
+round(DF,digits = 4)
 
 
 

@@ -15,7 +15,6 @@ trnd  = (1:T)';
 rho   = 1; 
 % set seend of random number generator for reproducibility 
 rng(123)
-
 % space allocation for storage of tstats and coeffs
 tstat0  = zeros(N,1);   rho0  = zeros(N,1);
 tstatC  = zeros(N,1);   rhoC  = zeros(N,1);
@@ -27,11 +26,9 @@ tic
 for jj = 1:N
   % generate pure random walk
   y = cumsum(randn(T+1,1));
-  
   % MAKE Y X VARIABLES
   Y = y(2:end); 			% y(t)
   X = y(1:end-1);		  % y(t-1)
-
 	% run the 3 separate regressions
   [bhat,se]      = fastols(Y,X);  
   [Cbhat,Cse]    = fastols(Y,[X C]);
@@ -47,7 +44,7 @@ for jj = 1:N
 end 
 toc
 
-%% COMPUTE PERCENTILS OF CRITICAL VALUES
+%% COMPUTE PERCENTILES OF CRITICAL VALUES
 pctls   = [1 2.5 5 7.5 10 50 90 92.5 95 97.5 99]/100; 
 % DF-critical values
 pct_N0  = norminv(pctls);
@@ -160,12 +157,12 @@ usdata.BN_AR1     = cycl_BN_AR1;
 usdata.BN_MA1     = cycl_BN_MA1;
 usdata.BN_ARMA11  = cycl_BN_ARMA11;
 
-% % compare to the R estiamtes
-% R = (parquetread('R_cycles.parquet')); % R cycles only
-% R.Properties.DimensionNames{1} = 'Date'
-% M = usdata(:,end-2:end); % matlab cycles only
-% all = join(M,R)
-% parquetwrite('R_out.parquet',R)
+% % % compare to the R estiamtes
+% % R = (parquetread('R_cycles.parquet')); % R cycles only
+% % R.Properties.DimensionNames{1} = 'Date'
+% % M = usdata(:,end-2:end); % matlab cycles only
+% % all = join(M,R)
+% % parquetwrite('R_out.parquet',R)
 
 % HP-filter cycle
 [cycl,trnd] = hp_filter(usdata.y, 1600);
