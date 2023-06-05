@@ -12,6 +12,7 @@ if (!"pacman" %in% installed.packages()){install.packages("pacman"); cat("pacman
 #> [1] "bingSearchXScraper"
 #> 
 pacman::p_load(forecast, matlab, tidyverse, readxl, arrow, curl, mFilter) 
+pacman::p_load(RcppArmadillo)
 cat("\014")
 set.seed(123)
 
@@ -35,9 +36,13 @@ for (ii in 1:N) {
   y1 = matRW[1:T-1,ii]
   y  = matRW[2:T,  ii]
   # run the regressions and store rho_hat as well as tstat = (rho-1)/se(rho)
-  df0 = lm(y ~ 0 + y1)   
-  rho0[ii]   = df0$coefficients[1]
-  tstat0[ii] = (rho0[ii] - 1)/sqrt(diag(vcov(df0)))
+  # df0 = lm(y ~ 0 + y1)   
+  # rho0[ii]   = df0$coefficients[1]
+  # tstat0[ii] = (rho0[ii] - 1)/sqrt(diag(vcov(df0)))
+  
+  df0 = fastLm(cbind(ones(length(y1),1),y1), y)
+  rho0[ii]   = df0$coefficients[2]
+  tstat0[ii] = (rho0[ii] - 1)/df0$stderr[2]
   
   dfC = lm(y ~ y1)       
   rhoC[ii] = dfC$coefficients[2]
@@ -65,7 +70,7 @@ legend(-6.1, .6, legend = c("No-constant and no trend", "with constant", "with c
        col = c("dodgerblue3", "brown2", "orange", "black" ),
        text.font=1, lwd=2, 
        lty=1, cex=1)
-cat("\014")
+# cat("\014")
 
 # %% COMPUTE PERCENTILS OF CRITICAL VALUES
 pctls = c(1, 2.5, 5, 7.5, 10, 50, 90, 92.5, 95, 97.5, 99)/100 
@@ -81,7 +86,7 @@ round(DF,digits = 4)
 # get the US data from GitHub # download.file(.) seems to create problems reading the file
 # temp_file_p = tempfile(); curl_download(url = 'https://github.com/4db83/TSEF-code/raw/main/data/real_gdp_US_2022Q4.parquet',destfile = temp_file_p)
 temp_file_  = tempfile(); curl_download(url = 'https://github.com/4db83/TSEF-code/raw/main/data/real_gdp_US_2022Q4.xlsx', destfile = temp_file_)
-cat("\014")
+# cat("\014")
 # read US data
 # this below uses the parquet file system as an alternative
 # usdata      = read_parquet(temp_file_) # this uses the parquet file system as an alternative
@@ -153,7 +158,7 @@ legend(10700, 4.8,
        text.font=1, lwd=2, 
        lty=1, cex=1)
 
-cat("\014")
+# cat("\014")
 
 # print the DF critical values table here 
 round(DF,digits = 4)
