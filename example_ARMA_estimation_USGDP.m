@@ -92,8 +92,8 @@ plotacf(usdata.dy);
 
 %% ESTIMATE THE ARMA MODELS
 % set upper bounds for p* and q* to search over the ARMA model: CHOOSE THESE CAREFULLY.
-P = 3;
-Q = 3;
+P = 2;
+Q = 2;
 
 % Space allocation for bic and aic values
 BIC_pq	= zeros(P+1,Q+1);
@@ -160,7 +160,7 @@ setoutsideTicks
 add2yaxislabel
 tickshrink(.9)
 addsubtitle('(a) Actual and fitted values', fig.st)
-legendflex(LG,{'GDP growth','AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor',3.*[1 1],'Interpreter','Latex')
+legendflex(LG,{'GDP growth','AIC-ARMA(2,2)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor',3.*[1 1],'Interpreter','Latex')
 
 subplot(2,1,2)
 hold on; LG = [];
@@ -182,7 +182,7 @@ setoutsideTicks
 add2yaxislabel
 tickshrink(.9)
 addsubtitle('(b) Residuals', fig.st)
-legendflex(LG,{'AIC-ARMA(2,1)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor',3.*[1 1],'Interpreter','Latex')
+legendflex(LG,{'AIC-ARMA(2,2)','BIC-ARMA(1,0)'}, 'fontsize', fig.fs - 1, 'anchor',3.*[1 1],'Interpreter','Latex')
 % UNCOMMENT TO PRINT TO PDF
 % print2pdf('fitted_values_US', 1);
 
