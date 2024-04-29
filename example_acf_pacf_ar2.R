@@ -12,6 +12,7 @@ if (!"pacman" %in% installed.packages()){install.packages("pacman"); cat("pacman
 # LOAD REQUIRED PACKAGES
 pacman::p_load(polynom, matlab)
 source("./R_help_functions.R")
+# source("https://raw.githubusercontent.com/4db83/TSEF-code/main/R_help_functions.R") # source dirctly from Github.
 
 # AR Lag polynomial ----
 a1 = 1.50 ; a2 = -0.56 

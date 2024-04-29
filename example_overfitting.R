@@ -47,7 +47,7 @@ for (i in 1:Nsim){
     }
     # store the ARMA terms
     arma.terms[i,] = aout$arma[1:2]
-    cat("Iteration number =", (i ), " ARMA terms: ", aout$arma[1:2], "\n")
+    cat("Iteration number =", sprintf("%03d", i), "ARMA terms:", aout$arma[1:2], "\n")
 }
 # tT = proc.time() - T0
 cat("Elapased time is:", (proc.time() - T0)[3], "\n" )
@@ -56,5 +56,5 @@ N_AR_terms = sum(arma.terms[,1]>0)
 N_MA_terms = sum(arma.terms[,2]>0)
 # print to screen the number of wrongly identified ARMA terms
 cat(paste0("True model is ARMA(0,0), yet Auto.arima finds ", N_AR_terms, 
-           " AR terms and ", N_MA_terms, " MA terms!!!") )
+           " AR terms and ", N_MA_terms, " MA terms!!! \n") )
 toc()

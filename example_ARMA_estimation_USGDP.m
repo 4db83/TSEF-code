@@ -3,26 +3,26 @@
 clear; clc; clf;
 addpath(genpath('./db.toolbox/'))
 % set to 1 to get new data
-get_new_data = 1;
+get_new_data = 0;
 
 if get_new_data
   % get data from FRED2
   % Billions of Chained 2012 Dollars, Seasonally Adjusted Annual Rate
-  T1 = datestr(datenum('Q4-2022','qq-yyyy'),'yyyy-mm-dd');
+  T1 = datestr(datenum('Q4-2023','qq-yyyy'),'yyyy-mm-dd');
   T0 = datestr(datenum('Q1-1947','qq-yyyy'),'yyyy-mm-dd');
   usdata = as_timetable(getFredData('GDPC1', T0, T1,'lin','q'),'gdpc1'); 
   usdata = synchronize(usdata, as_timetable(getFredData('USRECQ', T0, T1,'lin','q'),'NBER'));
-  save('./data/real_gdp_US_2022Q4.mat', 'usdata');
+  save('./data/real_gdp_US_2023Q4.mat', 'usdata');
   % print/export to xlsx if needed
-  print2xls(usdata,'/data/real_gdp_US_2022Q4.xlsx')
+  print2xls(usdata,'/data/real_gdp_US_2023Q4.xlsx')
   % write also to parquet file for easy reading in R
-  parquetwrite('./data/real_gdp_US_2022Q4.parquet',usdata)
+  parquetwrite('./data/real_gdp_US_2023Q4.parquet',usdata)
   % save also in traditional matlab format
-  save('./data/real_gdp_US_2022Q4.mat', 'usdata');
+  save('./data/real_gdp_US_2023Q4.mat', 'usdata');
   disp('done saving the data')
 else
   % load './data/real_gdp_US_2021Q4.mat';
-  load './data/real_gdp_US_2022Q4.mat';
+  load './data/real_gdp_US_2023Q4.mat';
   % OR READ FROM .XLSX USING READTABLE AND THEN CONVERT TO TIMETABLE AS USED BELOW
 %   tmp_tbl = readtable('./data/real_gdp_US_2021Q4.xlsx');
 %   usdata  = table2timetable(tmp_tbl(:,2:end), 'RowTimes', datetime(tmp_tbl{:,1},'InputFormat','dd.MM.yyyy'));
@@ -92,8 +92,8 @@ plotacf(usdata.dy);
 
 %% ESTIMATE THE ARMA MODELS
 % set upper bounds for p* and q* to search over the ARMA model: CHOOSE THESE CAREFULLY.
-P = 2;
-Q = 1;
+P = 3;
+Q = 3;
 
 % Space allocation for bic and aic values
 BIC_pq	= zeros(P+1,Q+1);
@@ -200,9 +200,9 @@ addsubtitle('Sample ACF/PACF of residuals from AIC model', [-1.35 -.66], 20)
 % UNCOMMENT TO PRINT TO PDF
 % print2pdf('acf_arma_aic_fit', 1)
  
-% THEORETICAL ACF/PACF VALUES OF FITTED MODEL
-aL_bic = [1 -arma_bic.pars(2:(p_bic-1)+1)'];
-bL_bic = [1  arma_bic.pars((p_bic-1)+2:end)'];
+%% THEORETICAL ACF/PACF VALUES OF FITTED MODEL
+aL_bic = arma_bic.aL;
+bL_bic = arma_bic.bL;
 
 % plot theoretical ACF/PACF values of fitted model to visually compare to sample ACF/PACF
 figure(6);
@@ -255,3 +255,4 @@ addsubtitle('Theoretical ACF/PACF of BIC model', [-1.35 -.66], 20)
 
 
 %EOF 
+
