@@ -63,7 +63,7 @@ dy = y-lag(y)
 trend = 1:length(dy)
 
 # plot ACF
-pacf = plot.acf(y)
+pacf = plot.acf(dy)
 head(pacf)
 
 # plot the series to see if trending or not
@@ -73,8 +73,8 @@ plot( Date, y, type = 'l', lwd = 1.5,  # ylim=c(4, 10),
 # Do F-test (manually) to test if unit-root with drift --> 𝛾 = a₂ = 0 (Joint F-test ϕ₃)
 # joint.1 = linearHypothesis( adf.1, c("trend=0", "lag(dy, 1) =0"), test = c("F") )
 # print(joint.1)
-df.UR = print.results( lm(dy ~ lag(y) + lag(dy,1)   ) , -2, Hide = 0)
-df.R  = print.results( lm(dy ~ 0      + lag(dy,1)   ) , -2, Hide = 1)
+df.UR = print.results( lm(dy ~ lag(y) + lag(dy, 1) ) , -2, Hide = 0)
+df.R  = print.results( lm(dy ~ 0      + lag(dy, 1) ) , -2, Hide = 1)
 # cat(strrep("-", 80)); cat("\n")
 
 No.restrictions = 2
