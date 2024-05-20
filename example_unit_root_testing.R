@@ -23,6 +23,38 @@ NP = read_xlsx("./data/Nelson_Plosser_data.xlsx")
 # print(NP, n = 150)
 
 # select the variable to work with for the ADF tests ---- 
+y = log(NP$"IP")
+# convet -inf due to log(0) to NA which R handles by removing them 
+y[is.infinite(y)] = NA
+Date = NP$Year
+dy = y-lag(y)
+trend = 1:length(dy)
+
+# plot ACF
+pacf = plot.acf(y)
+head(pacf)
+
+# plot the series to see if trending or not
+plot( Date, y, type = 'l', lwd = 1.5, ylim=c(0, 5), 
+      cex.lab  = 1.5, cex.axis = 1.5, cex.main = 1.5 )
+
+# Do F-test (manually) to test if unit-root with drift --> 𝛾 = a₂ = 0 (Joint F-test ϕ₃)
+# joint.1 = linearHypothesis( adf.1, c("trend=0", "lag(dy, 1) =0"), test = c("F") )
+# print(joint.1)
+df.UR = print.results( lm(dy ~ trend + lag(y) + lag(dy,1)   ) , -2, Hide = 0)
+df.R  = print.results( lm(dy ~                  lag(dy,1)   ) , -2, Hide = 1)
+# cat(strrep("-", 80)); cat("\n")
+
+No.restrictions = df.UR$K - df.R$K
+Ftest = 1/No.restrictions *(df.R$SSE - df.UR$SSE)/(df.UR$SSE) * df.UR$DF
+cat(" F-test of join joint null-hypotheis (H₀: 𝛾 = a₂ = 0):\n")
+cat(" F-stat:", round(Ftest, digits = 4), "\n")
+# if Ftest > 6.49  --> Reject H₀: 𝛾 = a₂ = 0.
+if (Ftest < 6.49) { cat( " Do NOT Reject H₀: 𝛾 = a₂ = 0 --> Series has a Unit-root! \n " )} else
+   { cat(" Reject H₀: 𝛾 = a₂ = 0 --> Series stationary around a deterministic time trend!") } 
+
+
+# select the variable to work with for the ADF tests ---- 
 y = log(NP$"Unemployment")
 # convet -inf due to log(0) to NA which R handles by removing them 
 y[is.infinite(y)] = NA
@@ -31,29 +63,25 @@ dy = y-lag(y)
 trend = 1:length(dy)
 
 # plot ACF
-plot.acf(y)
+pacf = plot.acf(y)
+head(pacf)
 
 # plot the series to see if trending or not
 plot( Date, y, type = 'l', lwd = 1.5,  # ylim=c(4, 10), 
-      cex.lab  = 1.5, cex.axis = 1.5, cex.main = 1.5 
-      )
-
-# summ(m1)
-print.results( lm(dy ~ lag(y) + trend + lag(dy, 1)  ) , -2)
-# print.results( lm(dy ~ lag(y) + trend ) , -2)
+      cex.lab  = 1.5, cex.axis = 1.5, cex.main = 1.5 )
 
 # Do F-test (manually) to test if unit-root with drift --> 𝛾 = a₂ = 0 (Joint F-test ϕ₃)
 # joint.1 = linearHypothesis( adf.1, c("trend=0", "lag(dy, 1) =0"), test = c("F") )
 # print(joint.1)
-df.UR = print.results( lm(dy ~ trend + lag(y) + lag(dy,1)   ) , -2, Hide = 1)
-df.R  = print.results( lm(dy ~ lag(dy,1)                    ) , -2, Hide = 1)
+df.UR = print.results( lm(dy ~ lag(y) + lag(dy,1)   ) , -2, Hide = 0)
+df.R  = print.results( lm(dy ~ 0      + lag(dy,1)   ) , -2, Hide = 1)
 # cat(strrep("-", 80)); cat("\n")
 
-N.restrictions = 2
-Ftest = 1/N.restrictions *(df.R$SSE - df.UR$SSE)/(df.UR$SSE) * df.UR$DF
+No.restrictions = 2
+Ftest = 1/No.restrictions *(df.R$SSE - df.UR$SSE)/(df.UR$SSE) * df.UR$DF
 cat(" F-test of join joint null-hypotheis (H₀: 𝛾 = a₂ = 0):\n")
 cat(" F-stat:", round(Ftest, digits = 4), "\n")
-# if Ftest > 6.49 and 8.73 --> Reject H₀: 𝛾 = a₂ = 0.
-if (Ftest < 8.73) { cat( " Do NOT Reject H₀: 𝛾 = a₂ = 0 --> Series has a Unit-root! " )} else
-   { cat(" Reject H₀: 𝛾 = a₂ = 0 --> Series stationary around a deterministic time trend!") } 
+# if Ftest > 6.49  --> Reject H₀: 𝛾 = a₂ = 0.
+if (Ftest < 6.49) { cat( " Do NOT Reject H₀: 𝛾 = a₂ = 0 --> Series has a Unit-root but no drift! " )} else
+{ cat(" Reject H₀: 𝛾 = a₂ = 0 --> Series stationard!") } 
 
