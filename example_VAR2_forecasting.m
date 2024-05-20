@@ -57,7 +57,7 @@ end
 Xhat_h = []; SigU_h = [];
 for h =	1:H							
   Xhat_h(:,h)		= S*(Mu + A^h*(Xt-Mu));						% h-step ahead forecasts
-	SigU_h(:,:,h) = Psi(:,:,h)*sig*Psi(:,:,h)';	% h-step ahead Sig weiths that need to be summed.
+	SigU_h(:,:,h) = Psi(:,:,h)*sig*Psi(:,:,h)';	    % h-step ahead Sig weiths that need to be summed.
 end
 
 % PLOT THE FORECASTS

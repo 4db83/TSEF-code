@@ -17,10 +17,12 @@ function z = trimr(x,n1,n2)
 % Toledo, OH 43606
 % jpl@jpl.econ.utoledo.edu
 
+if nargin < 3; n2 = 0; end
+
   [n junk] = size(x);
-  if (n1+n2) >= n; 
+  if (n1+n2) >= n
      error('Attempting to trim too much in trimr');
-  end;
+  end
   h1 = n1+1;   
   h2 = n-n2;
   z = x(h1:h2,:);

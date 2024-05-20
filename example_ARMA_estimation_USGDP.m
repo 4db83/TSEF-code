@@ -214,9 +214,12 @@ addsubtitle('Theoretical ACF/PACF of BIC model', [-1.35 -.66], 20)
 
 
 
-
-
-
+% clc
+% plotacf0([1 -0.8],1);
+% clc;clf
+% plotacf0([1 -1.3 0.4],[1 -.5]);
+% roots([1 -1.3 0.4])
+% roots([1 -0.5])
 
 
 
