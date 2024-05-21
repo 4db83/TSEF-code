@@ -11,7 +11,8 @@ if (!"pacman" %in% installed.packages()){install.packages("pacman")}
 functions_path = c("./local.Functions/"); if (dir.exists(functions_path)){
 invisible( lapply( paste0(functions_path, list.files(functions_path, "*.R")), source ) ) }
 # UNCOMMENT TO LOAD R BASELINE R_utility_functions.R FROM D:/matlab.tools/db.toolbox
-source("D:/matlab.tools/db.toolbox/R_utility_functions.R")
+# source("D:/matlab.tools/db.toolbox/R_utility_functions.R")
+source("./R_utility_functions.R")
 # LOAD REQUIRED PACKAGES
 pacman::p_load(tictoc,matlab,tis,tsibble,dplyr,zoo) 
 set.seed(1234)

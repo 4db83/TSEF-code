@@ -11,7 +11,7 @@ cat("\014"); rm(list = ls()); gc()
 if (!"pacman" %in% installed.packages()){install.packages("pacman"); cat("pacman installed\n")}
 # LOAD REQUIRED PACKAGES
 pacman::p_load(polynom, matlab)
-source("./R_help_functions.R")
+source("./R_utility_functions.R")
 
 # Non-invertible MA Lag polynomial ----
 b1 = -3.5 ; b2 = -2;

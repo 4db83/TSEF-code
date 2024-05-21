@@ -8,7 +8,7 @@ if (!"pacman" %in% installed.packages()){install.packages("pacman"); cat("pacman
 # if (!dir.exists(raw_data)){cat("Making director"); dir.create(raw_data)}
 # LOAD REQUIRED PACKAGES 
 pacman::p_load(polynom, matlab)
-source("./R_help_functions.R")
+source("./R_utility_functions.R")
 
 # Lecture Example ARMA(3,2):
 # AR Lag polynomial

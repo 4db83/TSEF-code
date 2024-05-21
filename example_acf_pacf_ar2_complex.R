@@ -11,7 +11,7 @@ cat("\014"); rm(list = ls()); gc()
 if (!"pacman" %in% installed.packages()){install.packages("pacman"); cat("pacman installed\n")}
 # LOAD REQUIRED PACKAGES
 pacman::p_load(polynom, matlab)
-source("./R_help_functions.R")
+source("./R_utility_functions.R")
 
 # AR Lag polynomial ----
 a1 = 1.4 ; a2 = -0.85
