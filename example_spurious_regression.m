@@ -9,13 +9,14 @@ set(groot,'defaultAxesFontName','Times New Roman')
 addpath(genpath('./db.toolbox/'))
 
 % specify paramters of the simulation
-rho_x = 1;
+rho_x = 0;
 rho_y = rho_x;
-T = 1e2;
-N = 1e4;
+T = 5e2;
+N = 5e4;
 % make storage space
 b_hat   = NaN(N,2);
 t_ratio = NaN(N,2);
+seed(1234)
 
 tic;
 for n = 1:N
@@ -52,4 +53,4 @@ hold on;
 histogram(t_ratio(:,2),'Normalization','pdf'); 
 plot(linspace(-5,5,1e3),normpdf(linspace(-5,5,1e3),0,1))
 hold off;
-% xlim([-5 5])
+xlim([-5 5])
