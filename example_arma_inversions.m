@@ -25,3 +25,7 @@ maout = deconv([bL(:);zeros(R+1,1)],aL(:));
 
 
 
+aL = [1 -1.2 .35];
+bL = [1 .5 .04];
+
+maout = arma2ma(aL,bL,10)

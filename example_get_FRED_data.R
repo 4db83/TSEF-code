@@ -45,8 +45,14 @@ pce.m = getFREDdata('https://fred.stlouisfed.org/data/PCEPILFE.txt',"pce.txt","M
 # to convert to end of q
 pce.q = convert(pce.m, tif = 'quarterly', method = 'constant', observed. = 'end')
 head2tail(pce.q)
+head2tail(pce.m)
 
-# Generate a sequence of quarterly dates
+pce.df <- data.frame(
+  Date = as.Date(ti(start(pce.m):end(pce.m), tif(pce.m))),
+  value = coredata(pce.m)
+)
+
+# Generate a sequencce of quarterly dates
 # function = tis2df(tis.Object){
 tis.object = pce.m
   freq.Num = frequency(tis.object)
@@ -71,9 +77,9 @@ tis.object = pce.m
 
 
 # Print the quarterly dates ----
-print(quarterly_dates)
-pce.ts = tsibble(quarterly_dates)
-head(pce.ts)
+# print(quarterly_dates)
+# pce.ts = tsibble(quarterly_dates)
+# head(pce.ts)
 
 
 # pce.ts = as_tsibble(pce.m, index = DATE)
