@@ -44,6 +44,7 @@ end
 x = x(B+1:end);                 % drop the burn-in period.
 
 % PLOTS
+figure(1)
 % clear plotting area and set default linewidth
 set(groot,'defaultLineLineWidth',1.5); 
 xg  = linspace(0,1.5,1e3)';     % grid for plotting
