@@ -86,7 +86,7 @@ addsubtitle('(b) First difference of log of US real GDP (annualized growth rate)
 %% PLOT SAMPLE ACF/PACF OF ANNUALIZED GDP 
 figure(2);
 plotacf(usdata.dy);
-% addsubtitle('Sample ACF/PACF of US GDP growth', [-1.35 -.66], 20)
+% addsubtitle('Sample ACF/PACF ofx US GDP growth', [-1.35 -.66], 20)
 % UNCOMMENT TO PRINT TO PDF
 % print2pdf('acf_USGDP_growth','../graphics')
 
@@ -131,7 +131,7 @@ fprintf('BIC best fitting ARMA model is: ARMA(%d,%d)  \n', [p_bic q_bic]-1)
 [p_hqc q_hqc]=find(min(min(HQC_pq))==HQC_pq);
 fprintf('HQC best fitting ARMA model is: ARMA(%d,%d)  \n', [p_hqc q_hqc]-1)
 
-% Estimate the final 'best' models based on IC
+%% Estimate the final 'best' models based on IC
 arma_aic = estimate_armax(usdata.dy,1,1:(p_aic-1),1:(q_aic-1)); print_arma_results(arma_aic);
 arma_bic = estimate_armax(usdata.dy,1,1:(p_bic-1),1:(q_bic-1)); print_arma_results(arma_bic);
 arma_hqc = estimate_armax(usdata.dy,1,1:(p_hqc-1),1:(q_hqc-1)); print_arma_results(arma_hqc);
@@ -204,10 +204,14 @@ addsubtitle('Sample ACF/PACF of residuals from AIC model', [-1.35 -.66], 20)
 aL_bic = arma_bic.aL;
 bL_bic = arma_bic.bL;
 
+aL_aic = arma_aic.aL;
+bL_aic = [1];
+
 % plot theoretical ACF/PACF values of fitted model to visually compare to sample ACF/PACF
 figure(6);
 plotacf0(aL_bic,bL_bic);
-addsubtitle('Theoretical ACF/PACF of BIC model', [-1.35 -.66], 20)
+% plotacf0(aL_aic,bL_aic);
+addsubtitle('Theoretical ACF/PACF of AIC model', [-1.35 -.66], 20)
 % UNCOMMENT TO PRINT TO PDF
 % print2pdf('acf0_ar1', 1);
 

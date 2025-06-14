@@ -22,7 +22,7 @@ function [cycle,trend,m] = hp_filter(data,lambda)
 %------------------------------------------------------------------------------%}
 
 T			= size(data,1);
-I			= speye(T);													% sparse identiy matrix.
+I			= speye(T);													% sparse identity matrix.
 D			= diff(I,2);												% Difference maker matrix.
 m			= (I + lambda*(D'*D));		          % shows the moving average weight matrix.
 trend	= m\data; 												  % permanent component.

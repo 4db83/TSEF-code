@@ -16,7 +16,7 @@ source("./R_utility_functions.R")
 
 Pmax  = 5;
 Qmax  = 5;
-T     = 3e2;
+T     = 3e3;
 a0    = rep(0,Pmax);
 b0    = rep(0,Qmax);
 T0    = proc.time();
@@ -27,7 +27,8 @@ arma.terms = matrix(0,Nsim,2)
 # set simulation seed
 set.seed(1)
 dx = matrix( rnorm(T*Nsim), T, Nsim )
-# start Matlab style timer for entire simulation
+
+# start Matlab style timer for entire simulation ----
 tic()
 for (i in 1:Nsim){
     aout = auto.arima( dx[,i],
@@ -49,12 +50,14 @@ for (i in 1:Nsim){
     arma.terms[i,] = aout$arma[1:2]
     cat("Iteration number =", sprintf("%03d", i), "ARMA terms:", aout$arma[1:2], "\n")
 }
-# tT = proc.time() - T0
+
+#  tT = proc.time() - T0 ----
 cat("Elapased time is:", (proc.time() - T0)[3], "\n" )
 print(arma.terms)
 N_AR_terms = sum(arma.terms[,1]>0)
 N_MA_terms = sum(arma.terms[,2]>0)
 # print to screen the number of wrongly identified ARMA terms
-cat(paste0("True model is ARMA(0,0), yet Auto.arima finds ", N_AR_terms, 
-           " AR terms and ", N_MA_terms, " MA terms!!! \n") )
+cat(paste0("True model is ARMA(0,0), yet Auto.arima finds \n", 
+           N_AR_terms, "× non-zero AR terms detected, and \n",
+           N_MA_terms, "× non-zero MA terms detected!!! \n") )
 toc()

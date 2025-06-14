@@ -1,4 +1,4 @@
-# clear screen and workspace
+# clear screen and workspace ----
 cat("\014"); rm(list = ls()); gc()
 # set working directory if need
 
@@ -19,8 +19,7 @@ bL = c(1, 0.4, -0.2)
 cat("MA Lag Polynomial is: "); print(as.polynomial(bL))
 
 # plot theoretical ACF
-aL = c(1, 0.9557, 0.014)
-bL = c(1, 0.9889)
+# aL = c(1, 0.9557, 0.014); bL = c(1, 0.9889)
 round(polyroot(fliplr(aL)),4)
 plot.acf0(aL,bL,50)
  
