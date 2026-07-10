@@ -32,7 +32,7 @@ NP = read_xlsx("./data/Nelson_Plosser_data.xlsx") %>%
 print(NP, n = 10)
 
 # select the variable to work with for the ADF tests 
-variable.selected = "PCRGNP"        
+variable.selected = "IP"        
 y = log(get(variable.selected, NP))           # y = log(NP$"PCRGNP")
 # convert -inf due to log(0) to NA which R handles by removing them 
 y[is.infinite(y)] = NA
@@ -53,8 +53,8 @@ head(pacf)
 # joint.1 = linearHypothesis( adf.1, c("trend=0", "lag(dy, 1) =0"), test = c("F") )
 # print(joint.1)
 cat(" Nelson-Plosser Series analyzed is: ", variable.selected, "\n")
-df.UR = print_results( lm(dy ~ trend + lag(y) + lag(dy,1) ) , "OLS", Hide = 0)
-df.R  = print_results( lm(dy ~                  lag(dy,1) ) , "OLS", Hide = 0)
+df.UR = print_results( lm(dy ~ trend + lag(y) + mlag(dy,4) ) , "OLS", Hide = 0)
+df.R  = print_results( lm(dy ~                  mlag(dy,4) ) , "OLS", Hide = 1)
 plot_acf(df.UR$uhat)
 
 No.restrictions = df.UR$K - df.R$K
@@ -67,46 +67,46 @@ if (Fstat < 6.49) { cat( " Do NOT Reject H₀: 𝛾 = a₂ = 0 --> Series has a 
 	{ cat(" Reject H₀: 𝛾 = a₂ = 0 --> Series stationary around a deterministic time trend!") } 
 cat("\n")
 
-# %% select the variable to work with for the ADF tests 
-variable.selected = "Unemployment"        
-y = log(get(variable.selected, NP))           # y = log(NP$"Unemployment")
-# convert -inf due to log(0) to NA which R handles by removing them
-y[is.infinite(y)] = NA
-Date = NP$date
-dy = y-lag(y)
-trend = 1:length(dy)
-
-# plot the series to see if trending or not
-plot( Date, y, type = 'l', lwd = 1.5,  # ylim=c(4, 10),
-      cex.lab  = 1.5, cex.axis = 1.5, cex.main = 1.5 )
-
-# plot ACF
-pacf = plot_acf(y)
-head(pacf)
-
-# Do F-test (manually) to test if unit-root without drift --> a₀ = 𝛾 = 0 (Joint F-test ϕ₃)
-# joint.1 = linearHypothesis( adf.1, c("trend=0", "lag(dy, 1) =0"), test = c("F") )
-# print(joint.1)
-cat(" Nelson-Plosser Series analyzed is: ", variable.selected, "\n")
-df.UR = print_results( lm(dy ~ lag(y) + lag(dy, 1) ) , "OLS", Hide = 0)
-df.R  = print_results( lm(dy ~ 0      + lag(dy, 1) ) , "OLS", Hide = 1)
-plot_acf(df.UR$uhat)
-
-No.restrictions = df.UR$K - df.R$K
-Ftest = 1/No.restrictions *(df.R$SSE - df.UR$SSE)/(df.UR$SSE) * df.UR$DF
-cat(" F-test of join joint null-hypotheis (H₀: a₀ = 𝛾 = 0):\n")
-cat(" F-stat:", round(Ftest, digits = 4), "\n")
-# 𝜙1: 4.71 and 6.70 (95% and 99%)
-# if Ftest > 4.71  --> Reject H₀: a₀ = 𝛾 = 0.
-if (Ftest < 4.72) { cat( " Do NOT Reject H₀: a₀ = 𝛾 = 0 --> Series has a Unit-root without drift! " )} else
-{ cat(" Reject H₀: a₀ = 𝛾 = 0 --> Series is stationary!") }
-
-plot_acf(dy)
-
 # %%using ADF in urca package 
-urca.adf = ur.df(na.omit(y), type = "drift", lags = 1)
+urca.adf = ur.df(na.omit(y), type = "trend", lags = 1)
 # urca.adf = ur.df(na.omit(y), type = "drift", selectlags = c("AIC")) 
-summary(urca.adf)
+print(summary(urca.adf))
+
+# %% select the variable to work with for the ADF tests 
+# variable.selected = "Employment"        
+# y = log(get(variable.selected, NP))           # y = log(NP$"Unemployment")
+# # convert -inf due to log(0) to NA which R handles by removing them
+# y[is.infinite(y)] = NA
+# Date = NP$date
+# dy = y-lag(y)
+# trend = 1:length(dy)
+# 
+# # plot the series to see if trending or not
+# plot( Date, y, type = 'l', lwd = 1.5,  # ylim=c(4, 10),
+#       cex.lab  = 1.5, cex.axis = 1.5, cex.main = 1.5 )
+# 
+# # plot ACF
+# pacf = plot_acf(y)
+# head(pacf)
+# 
+# # Do F-test (manually) to test if unit-root without drift --> a₀ = 𝛾 = 0 (Joint F-test ϕ₃)
+# # joint.1 = linearHypothesis( adf.1, c("trend=0", "lag(dy, 1) =0"), test = c("F") )
+# # print(joint.1)
+# cat(" Nelson-Plosser Series analyzed is: ", variable.selected, "\n")
+# df.UR = print_results( lm(dy ~ lag(y) + mlag(dy, 4) ) , "OLS", Hide = 0)
+# df.R  = print_results( lm(dy ~ 0      + mlag(dy, 4) ) , "OLS", Hide = 1)
+# plot_acf(df.UR$uhat)
+# 
+# No.restrictions = df.UR$K - df.R$K
+# Ftest = 1/No.restrictions *(df.R$SSE - df.UR$SSE)/(df.UR$SSE) * df.UR$DF
+# cat(" F-test of join joint null-hypotheis (H₀: a₀ = 𝛾 = 0):\n")
+# cat(" F-stat:", round(Ftest, digits = 4), "\n")
+# # 𝜙1: 4.71 and 6.70 (95% and 99%)
+# # if Ftest > 4.71  --> Reject H₀: a₀ = 𝛾 = 0.
+# if (Ftest < 4.72) { cat( " Do NOT Reject H₀: a₀ = 𝛾 = 0 --> Series has a Unit-root without drift! " )} else
+# { cat(" Reject H₀: a₀ = 𝛾 = 0 --> Series is stationary!") }
+# 
+# plot_acf(dy)
 
 # # "point optimal" test of Elliot et. al 
 # urca.gls <- ur.ers(na.omit(y), type = "DF-GLS", 

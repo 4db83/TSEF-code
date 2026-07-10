@@ -21,10 +21,7 @@ if (file.exists(local.Rfunction)){source(local.Rfunction)
 print2pdf = 0
 path2graphics = "./graphics/"
 
-# A. Computer Exercises 1) 
-N = 1e5
-# Increase to 1 Gigabyte (1,073,741,824 bytes)   # # Increase to 5 Gigabytes  # options(future.globals.maxSize = 5 * 1024^3)
-# options(future.globals.maxSize = 1 * 1024^3)
+N = 2e3
 set.seed(0) # set seed for reproducibility
 
 # Define sample size for the random walk process, T, as 80 + 1 to account for the lag in the regression
@@ -172,9 +169,9 @@ plot( ug, dnorm(ug), type = "l", lwd = 2, las = 1, ylab="", xlab="Distribution o
       # Remove default y,x-axis labels
       xaxt = "n", yaxt = "n",
       )
-lines( density(tstat0),  col='dodgerblue3', lwd=2 )
-lines( density(tstatC),  col='brown2'     , lwd=2 )
-lines( density(tstatCT), col='orange'     , lwd=2 )
+lines( density(tstat0),  col='brown2', lwd=2 )
+lines( density(tstatC),  col='dodgerblue3'     , lwd=2 )
+lines( density(tstatCT), col='green'     , lwd=2 )
 # abline(h=0)
 # Add a legend
 legend( "topleft", 
@@ -182,7 +179,7 @@ legend( "topleft",
                     "With constant", 
                     "With constant and trend", 
                     "N(0,1)"), 
-        col = c("dodgerblue3", "brown2", "orange", "black" ),
+        col = c("brown2", "dodgerblue3", "green", "black" ),
         lwd = 3.5,
         lty = 1,
         cex = fnt - .1 ,
